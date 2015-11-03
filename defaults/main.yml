@@ -33,4 +33,9 @@ lvm_groups:
         filesystem: ext4  #defines filesystem to format lvol as
         mount: true
         mntp: /mnt/test_2  #defines mountpoint for lvol
+#  - vgname: cinder-volumes
+#    disks: /dev/cciss/c0d1  #for multiple disks...../dev/sdb,/dev/sdc
+#    create: true  #defines if VG should exist or be removed....true or false
+#    lvnames:
+#      - None  #set to None to only create LVM VG w/out creating LVM LVOLS...
 manage_lvm: false  #defines if LVM will be managed by role....default is false to ensure nothing is changed by accident.

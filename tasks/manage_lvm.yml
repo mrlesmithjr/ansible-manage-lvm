@@ -17,7 +17,7 @@
   with_subelements:
     - lvm_groups
     - lvnames
-  when: ( item.0.create is defined and item.0.create ) and ( item.1 is defined and item.1 != None ) and ( item.1.create is defined and item.1.create )
+  when: ( item.0.create is defined and item.0.create ) and ( item.1 is defined and item.1 != 'None' ) and ( item.1.create is defined and item.1.create )
 
 - name: manage_lvm | creating new filesystem on new LVM logical volume(s)
   filesystem:
@@ -27,7 +27,7 @@
   with_subelements:
     - lvm_groups
     - lvnames
-  when: ( item.0.create is defined and item.0.create ) and ( item.1 is defined and item.1 != None ) and ( item.1.create is defined and item.1.create )
+  when: ( item.0.create is defined and item.0.create ) and ( item.1 is defined and item.1 != 'None' ) and ( item.1.create is defined and item.1.create )
 
 - name: manage_lvm | mounting new filesystem(s)
   mount:
@@ -38,7 +38,7 @@
   with_subelements:
     - lvm_groups
     - lvnames
-  when: ( item.0.create is defined and item.0.create ) and ( item.1 is defined and item.1 != None ) and ( item.1.create is defined and item.1.create ) and ( item.1.mount is defined and item.1.mount )
+  when: ( item.0.create is defined and item.0.create ) and ( item.1 is defined and item.1 != 'None' ) and ( item.1.create is defined and item.1.create ) and ( item.1.mount is defined and item.1.mount )
 
 - name: manage_lvm | resizing filesystem
   command: resize2fs /dev/{{ item.0.vgname }}/{{ item.1.lvname }}
@@ -63,7 +63,7 @@
   with_subelements:
     - lvm_groups
     - lvnames
-  when: ( item.1 is defined and item.1 != None ) and ( item.1.create is defined and not item.1.create )
+  when: ( item.1 is defined and item.1 != 'None' ) and ( item.1.create is defined and not item.1.create )
 
 - name: manage_lvm | Removing LVM logical volume(s)
   lvol:
@@ -74,7 +74,7 @@
   with_subelements:
     - lvm_groups
     - lvnames
-  when: ( item.1 is defined and item.1 != None ) and ( item.1.create is defined and not item.1.create )
+  when: ( item.1 is defined and item.1 != 'None' ) and ( item.1.create is defined and not item.1.create )
 
 - name: manage_lvm | Removing LVM volume group(s)
   lvg:

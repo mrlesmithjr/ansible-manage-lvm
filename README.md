@@ -7,12 +7,14 @@ Requirements
 ------------
 
 Devices/disks to be part of the LVM setup must be identified prior to using this role. Ensure that you select the correct devices/disks.
+##### To only create an LVM VG w/out creating LVM LVOLS...define lvname w/ var as None as in the below example.
 
 Role Variables
 --------------
 
 ````
 ---
+# defaults file for ansible-manage-lvm
 lvm_groups:
   - vgname: ubuntu-vg
     disks: /dev/sda5,/dev/sdc,/dev/sdd  #for multiple disks...../dev/sdb,/dev/sdc
@@ -46,6 +48,11 @@ lvm_groups:
         filesystem: ext4  #defines filesystem to format lvol as
         mount: true
         mntp: /mnt/test_2  #defines mountpoint for lvol
+#  - vgname: cinder-volumes
+#    disks: /dev/cciss/c0d1  #for multiple disks...../dev/sdb,/dev/sdc
+#    create: true  #defines if VG should exist or be removed....true or false
+#    lvnames:
+#      - None  #set to None to only create LVM VG w/out creating LVM LVOLS...
 manage_lvm: false  #defines if LVM will be managed by role....default is false to ensure nothing is changed by accident.
 ````
 
