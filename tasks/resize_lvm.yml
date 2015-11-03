@@ -1,3 +1,0 @@
----
-- name: resize_lvm | resizing filesystem
-  command: resize2fs /dev/{{ resize_vgname }}/{{ resize_lvname }}
