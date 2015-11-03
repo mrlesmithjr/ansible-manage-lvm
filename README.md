@@ -51,7 +51,7 @@ Example Playbook
 -----------
     - hosts: servers
       roles:
-         - { role: mrlesmithjr.manage-lvm }
+         - mrlesmithjr.manage-lvm
 #### GitHub
 -----------
     - hosts: servers
