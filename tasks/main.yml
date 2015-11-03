@@ -6,11 +6,13 @@
 - include: centos.yml
   when: ansible_os_family == "RedHat"
 
-- include: create_lvm.yml
-  when: create_lvm is defined and create_lvm
+#- include: create_lvm.yml
+#  when: create_lvm is defined and create_lvm
 
-- include: extend_lvm.yml
-  when: extend_lvm is defined and extend_lvm
+#- include: extend_lvm.yml
+#  when: extend_lvm is defined and extend_lvm
 
-- include: resize_lvm.yml
-  when: resize_lvm is defined and resize_lvm
+#- include: resize_lvm.yml
+#  when: resize_lvm is defined and resize_lvm
+
+- include: manage_lvm.yml
