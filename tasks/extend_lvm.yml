@@ -1,0 +1,8 @@
+---
+- name: extend_lvm | extending existing LVM volume group
+  lvg:
+    vg: "{{ extend_vgname }}"
+    pvs: "{{ lvm_extend_disks }}"
+
+- name: extend_lvm | extending existing filesystem
+  command: lvextend {{ lvextend_options }} /dev/{{ extend_vgname }}/{{ extend_lvname }}
