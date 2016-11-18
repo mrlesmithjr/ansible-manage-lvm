@@ -12,6 +12,7 @@
     vg: "{{ item.0.vgname }}"
     lv: "{{ item.1.lvname }}"
     size: "{{ item.1.size }}"
+    shrink: no
     state: present
   register: lvm
   with_subelements:
