@@ -80,8 +80,8 @@
   when: >
         lvm['changed'] and
         item[1]['filesystem'] is defined and
-         item[1]['filesystem'] != "None" and
-         item[1]['filesystem'] != "swap" and
+        item[1]['filesystem'] != "None" and
+        item[1]['filesystem'] != "swap" and
         item[1]['filesystem'] != "xfs" and
         item[1]['filesystem'] != "btrfs"
 
