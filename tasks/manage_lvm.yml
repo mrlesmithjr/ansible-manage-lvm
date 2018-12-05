@@ -35,7 +35,7 @@
   filesystem:
     fstype: "{{ item[1]['filesystem'] }}"
     dev: "/dev/{{ item[0]['vgname'] }}/{{ item[1]['lvname'] }}"
-#    resizefs: yes  #coming in 2.0 which will replace the resizing filesystem task below
+    # resizefs: yes  #coming in 2.0 which will replace the resizing filesystem task below
   become: true
   with_subelements:
     - "{{ lvm_groups }}"
