@@ -48,7 +48,8 @@
         (item[1]['create'] is defined and
         item[1]['create']) and
         (item[1]['filesystem'] is defined and
-        item[1]['filesystem'] != 'None'))
+        item[1]['filesystem'] != 'None') and 
+        item[1]['filesystem'] != "swap")
 
 - name: manage_lvm | mounting new filesystem(s)
   mount:
@@ -132,7 +133,8 @@
         (item[1] is defined and
         item[1] != 'None') and
         (item[1]['create'] is defined and
-        not item[1]['create'])
+        not item[1]['create'] and 
+        item[1]['filesystem'] != "swap"))
 
 - name: manage_lvm | Removing LVM logical volume(s)
   lvol:
