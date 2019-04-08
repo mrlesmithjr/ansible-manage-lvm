@@ -134,7 +134,7 @@
         item[1] != 'None') and
         (item[1]['create'] is defined and
         not item[1]['create'] and
-        item[1]['filesystem'] != "swap"))
+        item[1]['filesystem'] != "swap")
 
 - name: manage_lvm | Removing LVM logical volume(s)
   lvol:
