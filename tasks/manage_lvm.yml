@@ -87,7 +87,7 @@
         item[1]['filesystem'] != "btrfs"
 
 - name: manage_lvm | resizing xfs
-  command: xfs_growfs -d /dev/{{ item[0]['vgname'] }}/{{ item[1]['lvname'] }}
+  command: xfs_growfs -d {{ item[1]['mntp'] }}
   become: true
   with_subelements:
     - "{{ lvm_groups }}"
