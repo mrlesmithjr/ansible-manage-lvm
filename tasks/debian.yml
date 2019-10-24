@@ -9,14 +9,16 @@
   become: true
 
 
-- name: debian | checking for scsi devices
-  shell: "sg_scan"
-  become: true
-  register: "scsi_devices"
-  changed_when: False
+- block:
+  - name: debian | checking for scsi devices
+    shell: "sg_scan"
+    become: true
+    register: "scsi_devices"
+    changed_when: False
 
-- name: debian | rescanning for new disks added
-  command: "/sbin/rescan-scsi-bus"
-  become: true
-  changed_when: False
-  when: scsi_devices['stdout'] != ""
+  - name: debian | rescanning for new disks added
+    command: "/sbin/rescan-scsi-bus"
+    become: true
+    changed_when: False
+    when: scsi_devices['stdout'] != ""
+  when: ansible_system_vendor != "Amazon EC2"
