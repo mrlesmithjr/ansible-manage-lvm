@@ -54,7 +54,7 @@
   changed_when: no
   when: >
     (
-    (lv is defined and item.1 != 'None') and
+    (lv is defined and lv != 'None') and
     (
     lv.filesystem is defined and
     lv.filesystem == "xfs"
