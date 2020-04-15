@@ -32,25 +32,13 @@ jobs:
       - name: Install molecule
         run: |
           sudo apt update
-          sudo apt -y install python3-setuptools python3 python3-pip docker
+          sudo apt -y install python3-setuptools python3 python3-pip docker vagrant
           sudo pip3 install wheel
-          sudo pip3 install docker molecule testinfra yamllint ansible-lint flake8
+          sudo pip3 install docker molecule testinfra yamllint ansible-lint flake8 molecule-vagrant
 
       - name: molecule lint
         run: |
           molecule lint
-
-  requirements:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: install prereq
-        run: |
-          ansible-galaxy collection install -r requirements.yml
-          ansible-galaxy role install -r requirements.yml
 
   molecule:
 
