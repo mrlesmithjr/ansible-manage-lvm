@@ -1,2 +1,44 @@
 ---
 # handlers file for ansible-manage-lvm
+- name: manage_lvm | resizing swap
+  shell: "swapoff -a && mkswap /dev/{{ item[0]['vgname'] }}/{{ item[1]['lvname'] }} && swapon -va"
+  become: true
+  with_subelements:
+    - "{{ lvm_groups }}"
+    - lvnames
+  when: >
+    item[1]['filesystem'] is defined and
+    item[1]['filesystem'] == "swap"
+
+- name: manage_lvm | resizing btrfs
+  command: "btrfs filesystem resize max {{ item[1]['mntp'] }}"
+  become: true
+  with_subelements:
+    - "{{ lvm_groups }}"
+    - lvnames
+  when: >
+    item[1]['filesystem'] is defined and
+    item[1]['filesystem'] == "btrfs"
+
+- name: manage_lvm | resizing xfs
+  command: xfs_growfs -d {{ item[1]['mntp'] }}
+  become: true
+  with_subelements:
+    - "{{ lvm_groups }}"
+    - lvnames
+  when: >
+    item[1]['filesystem'] is defined and
+    item[1]['filesystem'] == "xfs"
+
+- name: manage_lvm | resizing filesystem
+  command: resize2fs /dev/{{ item[0]['vgname'] }}/{{ item[1]['lvname'] }}
+  become: true
+  with_subelements:
+    - "{{ lvm_groups }}"
+    - lvnames
+  when: >
+    item[1]['filesystem'] is defined and
+    item[1]['filesystem'] != "None" and
+    item[1]['filesystem'] != "swap" and
+    item[1]['filesystem'] != "xfs" and
+    item[1]['filesystem'] != "btrfs"

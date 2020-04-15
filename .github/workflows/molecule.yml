@@ -1,0 +1,112 @@
+---
+
+# This is a basic workflow to help you get started with Actions
+
+name: Molecule
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+      - tags/*
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  lint:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: install lint prerequisite
+        run: |
+          sudo apt -y install python3-setuptools ansible-lint
+
+      - name: Install molecule
+        run: |
+          sudo apt update
+          sudo apt -y install python3-setuptools python3 python3-pip docker
+          sudo pip3 install wheel
+          sudo pip3 install docker molecule testinfra yamllint ansible-lint flake8
+
+      - name: molecule lint
+        run: |
+          molecule lint
+
+  requirements:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: install prereq
+        run: |
+          ansible-galaxy collection install -r requirements.yml
+          ansible-galaxy role install -r requirements.yml
+
+  molecule:
+
+    runs-on: ubuntu-latest
+    if: "false"
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: configure keyboard layout
+        run: |
+          echo XKBLAYOUT='us' > /etc/default/keyboard
+
+      - name: install virtualization stack
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update
+          sudo apt -y install cpu-checker
+          kvm-ok
+  # shit happens here, containerization sucks... that was worth the try
+
+      - name: install virtualization stack
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt -y install policycoreutils-python-utils qemu-kvm qemu-utils libvirt-clients libvirt-daemon-system bridge-utils python3-libvirt libnss-libvirt libguestfs-tools virtinst virt-top genisoimage libvirt-dev libvirt-bin
+
+      - name: install vagrant
+        env:
+          VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT: 1
+        run: |
+          wget https://releases.hashicorp.com/vagrant/2.2.7/vagrant_2.2.7_x86_64.deb
+          sudo apt -y install ./vagrant_2.2.7_x86_64.deb
+          vagrant plugin install vagrant-persistent-storage
+          vagrant plugin install vagrant-libvirt
+          sudo groupadd --system libvirt
+          sudo usermod -a -G libvirt $(whoami)
+          sudo /etc/init.d/libvirtd restart
+
+      - name: Install molecule
+        run: |
+          sudo apt -y install python3-setuptools
+          pip3 install molecule-vagrant wheel
+
+      - name: create molecule vm
+        env:
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+        run: |
+          molecule create --scenario-name kvm
+
+      - name: verify
+        run: |
+          molecule verify
+
+      - name: teardown
+        run: |
+          molecule destroy
