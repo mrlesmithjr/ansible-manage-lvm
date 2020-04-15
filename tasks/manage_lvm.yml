@@ -16,17 +16,17 @@
 
 - name: manage_lvm | Removing LVM logical volume(s)
   lvol:
-    vg: "{{ item.vgname }}"
-    lv: "{{ item.0.lvname }}"
+    vg: "{{ item.0.vgname }}"
+    lv: "{{ item.1.lvname }}"
     state: "absent"
     force: yes
   become: true
   loop: "{{ lvm_groups|subelements('lvnames') }}"
   when: >
-    (item.0 is defined and
-    item.0 != 'None') and
-    (item.0.create is defined and
-    not item.0.create)
+    (item.1 is defined and
+    item.1 != 'None') and
+    (item.1.create is defined and
+    not item.1.create)
 
 - name: manage_lvm | Removing LVM volume group(s)
   lvg:
