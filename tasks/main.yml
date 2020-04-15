@@ -8,5 +8,5 @@
 
 - include: manage_lvm.yml
   when: >
-        manage_lvm and
-        lvm_groups is defined
+    manage_lvm and
+    lvm_groups is defined

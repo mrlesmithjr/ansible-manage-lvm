@@ -2,85 +2,39 @@
 
 - name: manage_lvm | creating new LVM logical volume(s)
   lvol:
-    vg: "{{ vg.item[0]['vgname'] }}"
-    lv: "{{ vg.item[1]['lvname'] }}"
-    size: "{{ vg.item[1]['size'] }}"
+    vg: "{{ vg.0.vgname }}"
+    lv: "{{ vg.1.lvname'] }}"
+    size: "{{ vg.1.size }}"
     shrink: no
-    opts: "{{ vg.item[1]['opts'] | default('') }}"
+    opts: "{{ vg.1.opts | default('') }}"
     state: "present"
   become: true
-  notify:
-    - manage_lvm | resizing swap
-    - manage_lvm | resizing btrfs
-    - manage_lvm | resizing xfs
-    - manage_lvm | resizing filesystem
   when: >
     (
-    (vg.item[0]['create'] is defined
-    and vg.item[0]['create']) and
-    (vg.item[1] is defined and
-    vg.item[1] != 'None') and
-    (vg.item[1]['create'] is defined and
-    vg.item[1]['create'])
+    (vg.0.create is defined
+    and vg.0.create) and
+    (vg[1] is defined and
+    vg.1 != 'None') and
+    (vg.1.create is defined and
+    vg.1.create)
     )
 
 - name: manage_lvm | creating new filesystem on new LVM logical volume(s)
   filesystem:
-    fstype: "{{ vg.item[1]['filesystem'] }}"
-    dev: "/dev/{{ vg.item[0]['vgname'] }}/{{ vg.item[1]['lvname'] }}"
-    # resizefs: yes  #coming in 2.0 which will replace the resizing filesystem task below
+    fstype: "{{ vg.1.filesystem }}"
+    dev: "/dev/{{ vg.0.vgname }}/{{ vg.1.lvname }}"
+    resizefs: yes
   become: true
   when: >
     (
-    (vg.item[0]['create'] is defined and
-    vg.item[0]['create']) and
-    (vg.item[1] is defined and
-    vg.item[1] != 'None') and
-    (vg.item[1]['create'] is defined and
-    vg.item[1]['create']) and
+    (vg.0.create is defined and
+    vg.0.create) and
+    (vg[1] is defined and
+    vg.1 != 'None') and
+    (vg.1.create is defined and
+    vg.1.create) and
     (
-    vg.item[1]['filesystem'] is defined and
-    vg.item[1]['filesystem'] != 'None' and
-    vg.item[1]['filesystem'] != "swap" and
-    vg.item[1]['filesystem'] != "xfs"
-    )
-    )
-
-- name: lvm | check already converted
-  loop: "{{ lvm_groups|subelements('lvnames') }}"
-  shell: "xfs_info /dev/{{ vg.item.0.vgname }}/{{ vg.item.1.lvname }} | grep -c 'ftype=1'"
-  become: yes
-  register: alreadyformattedresult
-  ignore_errors: True
-  changed_when: no
-  when: >
-    (
-    (vg.item.1 is defined and vg.item.1 != 'None') and
-    (
-    vg.item.1.filesystem2 is defined and
-    vg.item.1.filesystem2 == "xfs"
-    )
-    and
-    (
-    vg.item.1.create is defined and
-    vg.item.1.create
-    )
-    )
-
-- name: manage_lvm | creating new filesystem on new LVM logical volume(s)
-  command: mkfs.xfs /dev/{{ vg.item.0.vgname }}/{{ vg.item.1.lvname }}
-  become: yes
-  when: >
-    (
-    alreadyformattedresult and
-    (vg.item[0]['create'] is defined and
-    vg.item[0]['create']) and
-    (vg.item[1] is defined and
-    vg.item[1] != 'None') and
-    (vg.item[1]['create'] is defined and
-    vg.item[1]['create']) and
-    (
-    vg.item[1]['filesystem'] is defined and
-    vg.item[1]['filesystem'] == "xfs"
+    vg.1.filesystem is defined and
+    vg.1.filesystem != 'None'
     )
     )

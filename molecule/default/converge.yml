@@ -18,7 +18,7 @@
             size: 10%VG
             opts: "--wipesignatures y"
             create: true
-            filesystem: ext4
+            filesystem: xfs
             mntp: "/var/lib/mountpoint2"
     manage_lvm: true
 

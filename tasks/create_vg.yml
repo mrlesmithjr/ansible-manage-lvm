@@ -1,22 +1,12 @@
 ---
-- name: manage_lvm | check existing physical volume group(s)
-  shell: "vgdisplay | grep '{{ item['vgname'] }}'"
-  become: true
-  with_items: "{{ lvm_groups }}"
-  ignore_errors: True
-  changed_when: no
-  register: vg_exist
 
-- debug: var=vg_exist
-
-- name: manage_lvm | creating new LVM physical volume group(s)
+- name: manage_lvm | creating new LVM volume group(s)
   lvg:
-    vg: "{{ item.item['vgname'] }}"
-    pvs: "{{ item.item['disks']|join(',') }}"
+    vg: "{{ item.vgname }}"
+    pvs: "{{ item.disks | join(',') }}"
     state: "present"
   become: true
-  with_items: "{{ vg_exist.results }}"
+  loop: "{{ lvm_groups }}"
   when: >
-    item.rc != 0 and
-    item.item['create'] is defined and
-    item.item['create']
+    item.create is defined and
+    item.create

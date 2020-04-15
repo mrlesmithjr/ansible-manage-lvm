@@ -20,3 +20,7 @@ def test_mylv_logical_volume_is_created(host):
 
 def test_volume_is_mounted(host):
     host.file("/var/lib/mountpoint").mode == 0o731
+
+
+def test_volume2_is_mounted(host):
+    host.file("/var/lib/mountpoint2").mode == 0o731

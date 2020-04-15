@@ -2,89 +2,67 @@
 - name: manage_lvm | manage physical volume group creation
   include: create_vg.yml
 
-- name: manage_lvm | check existing logical volume group(s)
-  shell: "lvs -o lv_name {{ item[0]['vgname'] }} --separator='|' --noheadings | grep {{ item[1]['lvname'] }}"
-  become: true
-  ignore_errors: True
-  changed_when: no
-  with_subelements:
-    - "{{ lvm_groups }}"
-    - lvnames
-  register: lv_exist
-
-- debug: var=lv_exist
-
 - name: manage_lvm | loop over logical volume(s)
   include: create_lv.yml
-  loop: "{{ lv_exist.results }}"
+  loop: "{{ lvm_groups }}"
   loop_control:
     loop_var: vg
-  when: >
-    vg.rc != 0
 
 - name: manage_lvm | unmounting filesystem(s)
   mount:
-    name: "{{ item[1]['mntp'] }}"
-    src: "/dev/{{ item[0]['vgname'] }}/{{ item[1]['lvname'] }}"
-    fstype: "{{ item[1]['filesystem'] | default(omit) }}"
+    name: "{{ item.1.mntp }}"
+    src: "/dev/{{ item.0.vgname }}/{{ item.1.lvname }}"
+    fstype: "{{ item.1.filesystem | default(omit) }}"
     state: "absent"
   become: true
-  with_subelements:
-    - "{{ lvm_groups }}"
-    - lvnames
+  loop: "{{ lvm_groups|subelements('lvnames') }}"
   when: >
-        (item[1] is defined and
-        item[1] != 'None') and
-        (item[1]['create'] is defined and
-        not item[1]['create'] and
-        item[1]['filesystem'] != "swap")
-
-- meta: flush_handlers
+    (item.1 is defined and
+    item.1 != 'None') and
+    (item.1.create is defined and
+    not item.1.create and
+    item.1.filesystem != "swap")
 
 - name: manage_lvm | mounting new filesystem(s)
   mount:
-    name: "{{ item[1]['mntp'] }}"
-    src: "/dev/{{ item[0]['vgname'] }}/{{ item[1]['lvname'] }}"
-    fstype: "{{ item[1]['filesystem'] }}"
+    name: "{{ item.1.mntp }}"
+    src: "/dev/{{ item.0.vgname }}/{{ item.1.lvname }}"
+    fstype: "{{ item.1.filesystem }}"
     state: "mounted"
-    opts: "{{ item[1]['mopts'] | default('defaults') }}"
+    opts: "{{ item.1.mopts | default('defaults') }}"
   become: true
-  with_subelements:
-    - "{{ lvm_groups }}"
-    - lvnames
+  loop: "{{ lvm_groups|subelements('lvnames') }}"
   when: >
-    ((item[0]['create'] is defined and
-    item[0]['create']) and
-    (item[1] is defined and
-    item[1] != 'None') and
-    (item[1]['create'] is defined and
-    item[1]['create']) and
-    (item[1]['mount'] is defined and
-    item[1]['mount']))
+    ((item.0.create is defined and
+    item.0.create) and
+    (item.1 is defined and
+    item.1 != 'None') and
+    (item.1.create is defined and
+    item.1.create) and
+    (item.1.mount is defined and
+    item.1.mount))
 
 - name: manage_lvm | Removing LVM logical volume(s)
   lvol:
-    vg: "{{ item[0]['vgname'] }}"
-    lv: "{{ item[1]['lvname'] }}"
+    vg: "{{ item.0.vgname }}"
+    lv: "{{ item.1.lvname }}"
     state: "absent"
     force: yes
   become: true
-  with_subelements:
-    - "{{ lvm_groups }}"
-    - lvnames
+  loop: "{{ lvm_groups|subelements('lvnames') }}"
   when: >
-        (item[1] is defined and
-        item[1] != 'None') and
-        (item[1]['create'] is defined and
-        not item[1]['create'])
+    (item.1 is defined and
+    item.1 != 'None') and
+    (item.1.create is defined and
+    not item.1.create)
 
-- name: manage_lvm | Removing LVM physical volume group(s)
+- name: manage_lvm | Removing LVM volume group(s)
   lvg:
-    vg: "{{ item['vgname'] }}"
-    pvs: "{{ item['disks']|join(',') }}"
+    vg: "{{ item.vgname }}"
+    pvs: "{{ item.disks | join(',') }}"
     state: "absent"
   become: true
-  with_items: "{{ lvm_groups }}"
+  loop: "{{ lvm_groups }}"
   when: >
-        item['create'] is defined and
-        not item['create']
+    item.create is defined and
+    not item.create
