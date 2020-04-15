@@ -1,40 +1,30 @@
 ---
+- debug: var=vg
+
+- name: "debug lvm"
+  loop: "{{ vg.lvnames }}"
+  debug: var=lv
+  loop_control:
+    loop_var: lv
 
 - name: manage_lvm | creating new LVM logical volume(s)
   lvol:
-    vg: "{{ vg.0.vgname }}"
-    lv: "{{ vg.1.lvname'] }}"
-    size: "{{ vg.1.size }}"
+    vg: "{{ vg.vgname }}"
+    lv: "{{ lv.lvname }}"
+    size: "{{ lv.size }}"
     shrink: no
-    opts: "{{ vg.1.opts | default('') }}"
+    opts: "{{ lv.opts | default('') }}"
     state: "present"
+  loop: "{{ vg.lvnames }}"
+  loop_control:
+    loop_var: lv
   become: true
   when: >
     (
-    (vg.0.create is defined
-    and vg.0.create) and
-    (vg[1] is defined and
-    vg.1 != 'None') and
-    (vg.1.create is defined and
-    vg.1.create)
-    )
-
-- name: manage_lvm | creating new filesystem on new LVM logical volume(s)
-  filesystem:
-    fstype: "{{ vg.1.filesystem }}"
-    dev: "/dev/{{ vg.0.vgname }}/{{ vg.1.lvname }}"
-    resizefs: yes
-  become: true
-  when: >
-    (
-    (vg.0.create is defined and
-    vg.0.create) and
-    (vg[1] is defined and
-    vg.1 != 'None') and
-    (vg.1.create is defined and
-    vg.1.create) and
-    (
-    vg.1.filesystem is defined and
-    vg.1.filesystem != 'None'
-    )
+    (vg.create is defined
+    and vg.create) and
+    (lv is defined and
+    lv != 'None') and
+    (lv.create is defined and
+    lv.create)
     )
