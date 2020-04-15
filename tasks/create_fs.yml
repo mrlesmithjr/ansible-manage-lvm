@@ -1,0 +1,93 @@
+---
+
+- name: manage_lvm | creating new filesystem on new LVM logical volume(s)
+  filesystem:
+    fstype: "{{ lv.filesystem }}"
+    dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
+    resizefs: yes
+  loop: "{{ vg.lvnames }}"
+  loop_control:
+    loop_var: lv
+  become: true
+  when: >
+    (
+    (vg.create is defined and
+    vg.create) and
+    (lv is defined and
+    lv != 'None') and
+    (lv.create is defined and
+    lv.create) and
+    (
+    lv.filesystem is defined and
+    lv.filesystem != 'None' and
+    lv.filesystem != 'xfs'
+    )
+    )
+  # unable to resize xfs: looks like we've to reference the mountpoint instead of the device
+
+- name: manage_lvm | creating new xfs filesystem on new LVM logical volume(s)
+  filesystem:
+    fstype: "{{ lv.filesystem }}"
+    dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
+  loop: "{{ vg.lvnames }}"
+  loop_control:
+    loop_var: lv
+  become: true
+  when: >
+    (
+    (vg.create is defined and
+    vg.create) and
+    (lv is defined and
+    lv != 'None') and
+    (lv.create is defined and
+    lv.create) and
+    (
+    lv.filesystem is defined and
+    lv.filesystem == 'xfs'
+    )
+    )
+  # unable to resize xfs: looks like we've to reference the mountpoint instead of the device
+
+- name: manage_lvm | unmounting filesystem(s)
+  mount:
+    path: "{{ lv.mntp }}"
+    src: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
+    fstype: "{{ lv.filesystem | default(omit) }}"
+    state: "absent"
+  become: true
+  loop: "{{ vg.lvnames }}"
+  loop_control:
+    loop_var: lv
+  when: >
+    (lv is defined and
+    lv != 'None') and
+    (lv.create is defined and
+    not lv.create and
+    lv.filesystem != "swap")
+
+- name: "debug mount"
+  loop: "{{ vg.lvnames }}"
+  debug: var=lv
+  loop_control:
+    loop_var: lv
+
+
+- name: manage_lvm | mounting new filesystem(s)
+  mount:
+    path: "{{ lv.mntp }}"
+    src: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
+    fstype: "{{ lv.filesystem }}"
+    state: "mounted"
+    opts: "{{ lv.mopts | default('defaults') }}"
+  become: true
+  loop: "{{ vg.lvnames }}"
+  loop_control:
+    loop_var: lv
+  when: >
+    ((vg.create is defined and
+    vg.create) and
+    lv != 'None' and
+    (lv.create is defined and
+    lv.create) and
+    (lv.mount is defined and
+    lv.mount))

@@ -18,24 +18,15 @@ env:
   - distribution: fedora
     init: /usr/lib/systemd/systemd
     version: 25
-  - distribution: fedora
-    init: /usr/lib/systemd/systemd
-    version: 24
   - distribution: ubuntu
     init: /lib/systemd/systemd
     version: bionic
   - distribution: ubuntu
     init: /lib/systemd/systemd
     version: xenial
-  - distribution: ubuntu
-    init: /sbin/init
-    version: trusty
   - distribution: debian
     init: /lib/systemd/systemd
     version: stretch
-  - distribution: debian
-    init: /lib/systemd/systemd
-    version: jessie
 
 before_install:
   - 'sudo pip install yamllint'

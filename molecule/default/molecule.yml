@@ -1,0 +1,27 @@
+---
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+lint: yamllint . && flake8 && ansible-lint --exclude=meta
+platforms:
+  - name: Fedora-Molecule-LVM
+    box: bento/fedora-31
+    # box-url: ${platform_root}/packer/bento/builds/fedora-31-x86_64.virtualbox.box
+    provider_override_args:
+      - "persistent_storage.enabled = true"
+      - "persistent_storage.location = 'molecule-lvm.vdi'"
+      - "persistent_storage.size = 100"
+      - "persistent_storage.mount = false"
+      - "persistent_storage.diskdevice = '/dev/sdb'"
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      lvm:
+verifier:
+  name: testinfra
+  env:
+    PYTHONWARNINGS: "ignore:.*U.*mode is deprecated:DeprecationWarning"
+  options:
+    v: 1

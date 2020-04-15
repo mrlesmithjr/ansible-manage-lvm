@@ -1,0 +1,30 @@
+---
+- debug: var=vg
+
+- name: "debug lvm"
+  loop: "{{ vg.lvnames }}"
+  debug: var=lv
+  loop_control:
+    loop_var: lv
+
+- name: manage_lvm | creating new LVM logical volume(s)
+  lvol:
+    vg: "{{ vg.vgname }}"
+    lv: "{{ lv.lvname }}"
+    size: "{{ lv.size }}"
+    shrink: no
+    opts: "{{ lv.opts | default('') }}"
+    state: "present"
+  loop: "{{ vg.lvnames }}"
+  loop_control:
+    loop_var: lv
+  become: true
+  when: >
+    (
+    (vg.create is defined
+    and vg.create) and
+    (lv is defined and
+    lv != 'None') and
+    (lv.create is defined and
+    lv.create)
+    )
