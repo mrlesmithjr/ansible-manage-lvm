@@ -89,12 +89,6 @@
     )
     )
 
-- name: "debug mount"
-  loop: "{{ vg.lvnames }}"
-  debug: var=lv
-  loop_control:
-    loop_var: lv
-
 - name: manage_lvm | mounting new filesystem(s)
   mount:
     path: "{{ lv.mntp }}"
