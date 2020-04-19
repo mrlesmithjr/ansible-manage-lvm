@@ -1,0 +1,12 @@
+---
+
+- name: manage_lvm | creating new LVM volume group(s)
+  lvg:
+    vg: "{{ item.vgname }}"
+    pvs: "{{ item.disks | join(',') }}"
+    state: "present"
+  become: true
+  loop: "{{ lvm_groups }}"
+  when: >
+    item.create is defined and
+    item.create
