@@ -1,14 +1,14 @@
 ---
 - name: centos | installing lvm2
   package:
-    name: "lvm2"
-    state: "present"
+    name: lvm2
+    state: present
   become: true
 
 - name: centos | installing sg3_utils
   package:
-    name: "sg3_utils"
-    state: "present"
+    name: sg3_utils
+    state: present
   become: true
 
 - name: centos | debug lvg
@@ -36,12 +36,12 @@
     - lv.1.create|bool
 
 - name: centos | checking for scsi devices
-  command: "sg_scan"
+  command: sg_scan
   become: true
-  register: "scsi_devices"
+  register: scsi_devices
   changed_when: false
 
 - name: centos | rescanning for new disks
-  command: "/usr/bin/rescan-scsi-bus.sh"
+  command: /usr/bin/rescan-scsi-bus.sh
   become: true
   changed_when: false
