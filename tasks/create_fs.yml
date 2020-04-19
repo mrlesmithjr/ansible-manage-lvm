@@ -1,22 +1,22 @@
 ---
-- name: manage_lvm | unmounting filesystem(s)
+- name: create_fs | unmounting filesystem(s)
   mount:
     path: "{{ lv.mntp }}"
     src: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
     fstype: "{{ lv.filesystem | default(omit) }}"
-    state: "absent"
+    state: absent
   become: true
   loop: "{{ vg.lvnames }}"
   loop_control:
     loop_var: lv
-  when: >
-    (lv is defined and
-    lv != 'None') and
-    (lv.create is defined and
-    not lv.create and
-    lv.filesystem != "swap")
+  when:
+    - lv is defined
+    - lv != 'None'
+    - lv.create is defined
+    - not lv.create|bool
+    - lv.filesystem != "swap"
 
-- name: manage_lvm | creating new filesystem on new LVM logical volume(s)
+- name: create_fs | creating new filesystem on new LVM logical volume(s)
   filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
@@ -25,23 +25,19 @@
   loop_control:
     loop_var: lv
   become: true
-  when: >
-    (
-    (vg.create is defined and
-    vg.create) and
-    (lv is defined and
-    lv != 'None') and
-    (lv.create is defined and
-    lv.create) and
-    (
-    lv.filesystem is defined and
-    lv.filesystem != 'None' and
-    lv.filesystem != 'xfs'
-    )
-    )
-  # unable to resize xfs: looks like we've to reference the mountpoint instead of the device
+  when:
+    - vg.create is defined
+    - vg.create|bool
+    - lv is defined
+    - lv != 'None'
+    - lv.create is defined
+    - lv.create|bool
+    - lv.filesystem is defined
+    - lv.filesystem != 'None'
+    - lv.filesystem != 'xfs'
 
-- name: lvm | check already converted
+# unable to resize xfs: looks like we've to reference the mountpoint instead of the device
+- name: create_fs | check already converted
   # at least xfs is executed twice if the partition has changed in the meantime
   # then it tries to recreate the fs on the mounted fs which indeed fails...
   shell: "xfs_info {{ lv.mntp }} | grep -c 'ftype=1'"
@@ -51,22 +47,15 @@
     loop_var: lv
   register: mountedxfs
   ignore_errors: true
-  changed_when: no
-  when: >
-    (
-    (lv is defined and lv != 'None') and
-    (
-    lv.filesystem is defined and
-    lv.filesystem == "xfs"
-    )
-    and
-    (
-    lv.create is defined and
-    lv.create
-    )
-    )
+  changed_when: false
+  when:
+    - lv is defined and lv != 'None'
+    - lv.filesystem is defined
+    - lv.filesystem == "xfs"
+    - lv.create is defined
+    - lv.create|bool
 
-- name: manage_lvm | creating new xfs filesystem on new LVM logical volume(s)
+- name: create_fs | creating new xfs filesystem on new LVM logical volume(s)
   filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
@@ -74,37 +63,33 @@
   loop_control:
     loop_var: lv
   become: true
-  when: >
-    (
-    mountedxfs is failed and
-    (vg.create is defined and
-    vg.create) and
-    (lv is defined and
-    lv != 'None') and
-    (lv.create is defined and
-    lv.create) and
-    (
-    lv.filesystem is defined and
-    lv.filesystem == 'xfs'
-    )
-    )
+  when:
+    - mountedxfs is failed
+    - vg.create is defined
+    - vg.create|bool
+    - lv is defined
+    - lv != 'None'
+    - lv.create is defined
+    - lv.create|bool
+    - lv.filesystem is defined
+    - lv.filesystem == 'xfs'
 
-- name: manage_lvm | mounting new filesystem(s)
+- name: create_fs | mounting new filesystem(s)
   mount:
     path: "{{ lv.mntp }}"
     src: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
     fstype: "{{ lv.filesystem }}"
-    state: "mounted"
+    state: mounted
     opts: "{{ lv.mopts | default('defaults') }}"
   become: true
   loop: "{{ vg.lvnames }}"
   loop_control:
     loop_var: lv
-  when: >
-    ((vg.create is defined and
-    vg.create) and
-    lv != 'None' and
-    (lv.create is defined and
-    lv.create) and
-    (lv.mount is defined and
-    lv.mount))
+  when:
+    - vg.create is defined
+    - vg.create|bool
+    - lv != 'None'
+    - lv.create is defined
+    - lv.create|bool
+    - lv.mount is defined
+    - lv.mount|bool
