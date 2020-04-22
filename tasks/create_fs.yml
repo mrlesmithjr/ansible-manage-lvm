@@ -44,7 +44,7 @@
 - name: lvm | check already converted
   # at least xfs is executed twice if the partition has changed in the meantime
   # then it tries to recreate the fs on the mounted fs which indeed fails...
-  shell: "xfs_info /dev/{{ vg.vgname }}/{{ lv.lvname }} | grep -c 'ftype=1'"
+  shell: "xfs_info {{ lv.mntp }} | grep -c 'ftype=1'"
   become: yes
   loop: "{{ vg.lvnames }}"
   loop_control:
