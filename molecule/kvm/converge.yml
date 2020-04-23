@@ -5,7 +5,7 @@
     lvm_groups:
       - vgname: my_vg
         disks:
-          - /dev/sdb1
+          - /dev/vdb
         create: true
         lvnames:
           - lvname: my_lv

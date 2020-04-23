@@ -11,23 +11,34 @@
     state: "present"
   become: true
 
+- name: "debug lvg"
+  debug:
+    var: lv
+    verbosity: 3
+  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True}) }}"
+  loop_control:
+    loop_var: lv
+
+
 - name: centos | install xfs tools
   package:
     name: "xfsprogs"
     state: "present"
-  become: yes
-  loop: "{{ lvm_groups|subelements('lvnames') }}"
+  become: true
+  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True}) }}"
+  loop_control:
+    loop_var: lv
   when: >
     (
-    (item.1 is defined and item.1 != 'None') and
+    (lv.1 is defined and lv.1 != 'None') and
     (
-    item.1.filesystem is defined and
-    item.1.filesystem == "xfs"
+    lv.1.filesystem is defined and
+    lv.1.filesystem == "xfs"
     )
     and
     (
-    item.1.create is defined and
-    item.1.create
+    lv.1.create is defined and
+    lv.1.create
     )
     )
 
@@ -35,9 +46,9 @@
   command: "sg_scan"
   become: true
   register: "scsi_devices"
-  changed_when: False
+  changed_when: false
 
 - name: centos | rescanning for new disks
   command: "/usr/bin/rescan-scsi-bus.sh"
   become: true
-  changed_when: False
+  changed_when: false
