@@ -50,7 +50,7 @@
   loop_control:
     loop_var: lv
   register: mountedxfs
-  ignore_errors: True
+  ignore_errors: true
   changed_when: no
   when: >
     (
