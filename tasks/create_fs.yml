@@ -44,7 +44,7 @@
 - name: lvm | check already converted
   # at least xfs is executed twice if the partition has changed in the meantime
   # then it tries to recreate the fs on the mounted fs which indeed fails...
-  shell: "xfs_info /dev/{{ vg.vgname }}/{{ lv.lvname }} | grep -c 'ftype=1'"
+  shell: "xfs_info {{ lv.mntp }} | grep -c 'ftype=1'"
   become: yes
   loop: "{{ vg.lvnames }}"
   loop_control:
@@ -54,7 +54,7 @@
   changed_when: no
   when: >
     (
-    (lv is defined and item.1 != 'None') and
+    (lv is defined and lv != 'None') and
     (
     lv.filesystem is defined and
     lv.filesystem == "xfs"
@@ -88,12 +88,6 @@
     lv.filesystem == 'xfs'
     )
     )
-
-- name: "debug mount"
-  loop: "{{ vg.lvnames }}"
-  debug: var=lv
-  loop_control:
-    loop_var: lv
 
 - name: manage_lvm | mounting new filesystem(s)
   mount:

@@ -7,7 +7,7 @@
     state: "present"
   become: true
 
-- name: centos | install xfs tools
+- name: debian | install xfs tools
   package:
     name: "xfsprogs"
     state: "present"
