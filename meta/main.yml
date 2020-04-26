@@ -6,6 +6,10 @@ galaxy_info:
   license: MIT
   min_ansible_version: 1.2
   platforms:
+    - name: fedora
+      versions:
+        - 31
+
     - name: EL
       versions:
         - 6
@@ -21,4 +25,5 @@ galaxy_info:
 
   galaxy_tags:
     - system
+    - lvm
 dependencies: []

@@ -3,11 +3,12 @@ driver:
   name: vagrant
   provider:
     name: virtualbox
-lint: yamllint . && flake8 && ansible-lint --exclude=meta
+lint: yamllint . && flake8 && ansible-lint
 platforms:
   - name: Fedora-Molecule-LVM
-    box: bento/fedora-31
-    # box-url: ${platform_root}/packer/bento/builds/fedora-31-x86_64.virtualbox.box
+    box: fedora/31-cloud-base
+    cpu: 2
+    memory: 2048
     provider_override_args:
       - "persistent_storage.enabled = true"
       - "persistent_storage.location = 'molecule-lvm.vdi'"
@@ -16,9 +17,6 @@ platforms:
       - "persistent_storage.diskdevice = '/dev/sdb'"
 provisioner:
   name: ansible
-  inventory:
-    group_vars:
-      lvm:
 verifier:
   name: testinfra
   env:

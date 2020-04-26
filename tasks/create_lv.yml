@@ -1,9 +1,14 @@
 ---
-- debug: var=vg
+- name: "debug vg"
+  debug:
+    var: vg
+    verbosity: 2
 
 - name: "debug lvm"
   loop: "{{ vg.lvnames }}"
-  debug: var=lv
+  debug:
+    var: lv
+    verbosity: 1
   loop_control:
     loop_var: lv
 
