@@ -15,7 +15,7 @@
   debug:
     var: lv
     verbosity: 3
-  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True, 'wantlist: True'}) }}"
+  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True, 'wantlist': True}) }}"
   loop_control:
     loop_var: lv
 
@@ -24,7 +24,7 @@
     name: "xfsprogs"
     state: "present"
   become: true
-  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True, 'wantlist: True'}) }}"
+  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True, 'wantlist': True}) }}"
   loop_control:
     loop_var: lv
   when: >
