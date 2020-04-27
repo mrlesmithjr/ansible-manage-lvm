@@ -15,17 +15,16 @@
   debug:
     var: lv
     verbosity: 3
-  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True}) }}"
+  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True, 'wantlist: True'}) }}"
   loop_control:
     loop_var: lv
-
 
 - name: centos | install xfs tools
   package:
     name: "xfsprogs"
     state: "present"
   become: true
-  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True}) }}"
+  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True, 'wantlist: True'}) }}"
   loop_control:
     loop_var: lv
   when: >
