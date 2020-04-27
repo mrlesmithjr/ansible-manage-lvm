@@ -11,11 +11,11 @@
     state: "present"
   become: true
 
-- name: "debug lvg"
+- name: centos | debug lvg
   debug:
     var: lv
     verbosity: 3
-  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True, 'wantlist': True}) }}"
+  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True}, wantlist=True) }}"
   loop_control:
     loop_var: lv
 
@@ -24,22 +24,16 @@
     name: "xfsprogs"
     state: "present"
   become: true
-  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True, 'wantlist': True}) }}"
+  loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True}, wantlist=True) }}"
   loop_control:
     loop_var: lv
-  when: >
-    (
-    (lv.1 is defined and lv.1 != 'None') and
-    (
-    lv.1.filesystem is defined and
-    lv.1.filesystem == "xfs"
-    )
-    and
-    (
-    lv.1.create is defined and
-    lv.1.create
-    )
-    )
+  when:
+    - lv.1 is defined
+    - lv.1 != "None"
+    - lv.1.filesystem is defined
+    - lv.1.filesystem == "xfs"
+    - lv.1.create is defined
+    - lv.1.create|bool
 
 - name: centos | checking for scsi devices
   command: "sg_scan"
