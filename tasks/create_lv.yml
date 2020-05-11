@@ -5,7 +5,7 @@
     verbosity: 2
 
 - name: "debug lvm"
-  loop: "{{ vg.lvnames }}"
+  loop: "{{ vg.lvnames | default([]) }}"
   debug:
     var: lv
     verbosity: 1
@@ -20,7 +20,7 @@
     shrink: no
     opts: "{{ lv.opts | default('') }}"
     state: "present"
-  loop: "{{ vg.lvnames }}"
+  loop: "{{ vg.lvnames | default([])  }}"
   loop_control:
     loop_var: lv
   become: true
@@ -28,8 +28,7 @@
     (
     (vg.create is defined
     and vg.create) and
-    (lv is defined and
-    lv != 'None') and
+    (lv != 'None') and
     (lv.create is defined and
     lv.create)
     )
