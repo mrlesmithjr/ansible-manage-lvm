@@ -26,4 +26,4 @@ verifier:
   options:
     v: 1
 scenario:
-  name: kvm
+  name: kvmonlyvg
