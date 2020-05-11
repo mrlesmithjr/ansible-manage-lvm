@@ -1,3 +1,47 @@
+commit 881d5d77fa435ccaa026c3341d0d2ac1fb537b98
+Author: Larry Smith Jr <mrlesmithjr@gmail.com>
+Date:   Mon Apr 27 11:26:18 2020 -0400
+
+    Fixing syntax issue for wantlist
+
+commit 89360e3ffef9ff1dbbb5ad525a7ee1d77e6b8895
+Author: Larry Smith Jr <mrlesmithjr@gmail.com>
+Date:   Mon Apr 27 11:16:02 2020 -0400
+
+    Trying to fix the subelements lookup for a single element
+    
+    This addresses #42. Will need to do some validation testing, etc.
+
+commit c6a7034e4b0b381c5c5b44a15ce7baad7eab9c1b
+Author: Charlie Mordant <cmordant1@gmail.com>
+Date:   Fri Apr 24 17:22:07 2020 +0200
+
+    remove unused molecule env property
+
+commit 883055c33f2d6b4c0df8e61ce49771c451905334
+Author: Charlie Mordant <cmordant1@gmail.com>
+Date:   Thu Apr 23 19:38:35 2020 +0200
+
+    lint
+
+commit 325c2d6240022fe17abf40dffee842ccf79543f1
+Author: Charlie Mordant <cmordant1@gmail.com>
+Date:   Thu Apr 23 19:25:09 2020 +0200
+
+    install xfs
+
+commit 4a1177e420fd9632f77d07ce0a19f89a1515f8eb
+Author: Charlie Mordant <cmordant1@gmail.com>
+Date:   Tue Apr 21 19:01:29 2020 +0200
+
+    use xfs_info on mountpoint instead of lvm
+
+commit 7fd5a8eec9f4b5110929862056ab88c4db3f14de
+Author: Larry Smith Jr <mrlesmithjr@gmail.com>
+Date:   Sun Apr 19 01:59:29 2020 -0400
+
+    Only doing a Molecule lint at this time
+
 commit 7e2a076b0a8155015fd21502db860fa89a2114b3
 Author: Larry Smith Jr <mrlesmithjr@gmail.com>
 Date:   Sun Apr 19 01:44:38 2020 -0400
