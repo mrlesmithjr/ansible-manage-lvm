@@ -6,7 +6,7 @@
 - include_tasks: centos.yml
   when: ansible_os_family == "RedHat"
 
-- include_tasks: manage_lvm.yml
+- include_tasks: managelvm.yml
   when: >
     manage_lvm and
     lvm_groups is defined
