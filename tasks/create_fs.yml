@@ -103,7 +103,8 @@
   when: >
     ((vg.create is defined and
     vg.create) and
-    lv != 'None' and
+    (lv is defined and
+    lv != 'None') and
     (lv.create is defined and
     lv.create) and
     (lv.mount is defined and
