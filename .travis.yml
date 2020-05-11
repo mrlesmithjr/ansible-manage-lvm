@@ -26,5 +26,7 @@ before_install:
 script:
   - |
     sudo molecule test --scenario-name kvm
+    sudo molecule test --scenario-name kvmsinglelv
+    sudo molecule test --scenario-name kvmonlyvg
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

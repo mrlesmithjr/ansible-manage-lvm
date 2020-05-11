@@ -18,13 +18,6 @@ def test_mylv_logical_volume_is_created(host):
     assert int(cmd.stdout.rstrip()) >= 1
 
 
-def test_mylv_logical_volume_is_created(host):
-    command = """sudo lvs -o lv_name  my_vg --separator='|' --noheadings \
-    | grep -c 'my_lw'"""
-    cmd = host.run(command)
-    assert int(cmd.stdout.rstrip()) >= 1
-
-
 def test_volume_is_mounted(host):
     host.file("/var/lib/mountpoint").mode == 0o731
 

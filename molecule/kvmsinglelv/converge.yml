@@ -5,7 +5,7 @@
     lvm_groups:
       - vgname: my_vg
         disks:
-          - /dev/sdb1
+          - /dev/vdb
         create: true
         lvnames:
           - lvname: my_lv
@@ -15,13 +15,6 @@
             filesystem: ext4
             mount: true
             mntp: "/var/lib/mountpoint"
-          - lvname: my_lw
-            size: 20%VG
-            opts: "--wipesignatures y"
-            mount: true
-            create: true
-            filesystem: xfs
-            mntp: "/var/lib/mountpoint2"
     manage_lvm: true
   tasks:
     - name: "Include lvm"

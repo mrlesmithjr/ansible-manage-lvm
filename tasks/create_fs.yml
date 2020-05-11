@@ -41,7 +41,7 @@
     )
   # unable to resize xfs: looks like we've to reference the mountpoint instead of the device
 
-- name: lvm | check already converted
+- name: manage_lvm | check already converted
   # at least xfs is executed twice if the partition has changed in the meantime
   # then it tries to recreate the fs on the mounted fs which indeed fails...
   shell: "xfs_info {{ lv.mntp }} | grep -c 'ftype=1'"
