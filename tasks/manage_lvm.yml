@@ -18,23 +18,23 @@
   lvol:
     vg: "{{ item.0.vgname }}"
     lv: "{{ item.1.lvname }}"
-    state: "absent"
-    force: yes
+    state: absent
+    force: true
   become: true
   loop: "{{ lvm_groups|subelements('lvnames') }}"
-  when: >
-    (item.1 is defined and
-    item.1 != 'None') and
-    (item.1.create is defined and
-    not item.1.create)
+  when:
+    - item.1 is defined
+    - item.1 != 'None'
+    - item.1.create is defined
+    - not item.1.create|bool
 
 - name: manage_lvm | Removing LVM volume group(s)
   lvg:
     vg: "{{ item.vgname }}"
     pvs: "{{ item.disks | join(',') }}"
-    state: "absent"
+    state: absent
   become: true
   loop: "{{ lvm_groups }}"
-  when: >
-    item.create is defined and
-    not item.create
+  when:
+    - item.create is defined
+    - not item.create|bool

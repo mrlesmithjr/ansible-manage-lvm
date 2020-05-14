@@ -5,13 +5,27 @@ driver:
     name: virtualbox
 lint: yamllint . && flake8 && ansible-lint
 platforms:
-  - name: Fedora-Molecule-LVM
-    box: fedora/31-cloud-base
-    cpu: 2
-    memory: 2048
+  - name: CentOS-Molecule-LVM
+    box: mrlesmithjr/centos7
     provider_override_args:
       - "persistent_storage.enabled = true"
-      - "persistent_storage.location = 'molecule-lvm.vdi'"
+      - "persistent_storage.location = 'centos-molecule-lvm.vdi'"
+      - "persistent_storage.size = 100"
+      - "persistent_storage.mount = false"
+      - "persistent_storage.diskdevice = '/dev/sdb'"
+  - name: Fedora-Molecule-LVM
+    box: mrlesmithjr/fedora31
+    provider_override_args:
+      - "persistent_storage.enabled = true"
+      - "persistent_storage.location = 'fedora-molecule-lvm.vdi'"
+      - "persistent_storage.size = 100"
+      - "persistent_storage.mount = false"
+      - "persistent_storage.diskdevice = '/dev/sdb'"
+  - name: Ubuntu-Molecule-LVM
+    box: mrlesmithjr/bionic64
+    provider_override_args:
+      - "persistent_storage.enabled = true"
+      - "persistent_storage.location = 'ubuntu-molecule-lvm.vdi'"
       - "persistent_storage.size = 100"
       - "persistent_storage.mount = false"
       - "persistent_storage.diskdevice = '/dev/sdb'"

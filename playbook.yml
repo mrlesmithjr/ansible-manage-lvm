@@ -1,0 +1,27 @@
+---
+- hosts: test-nodes
+  vars:
+    lvm_groups:
+      - vgname: test-vg
+        disks:
+          - /dev/sdb
+          - /dev/sdc
+        create: true
+        lvnames:
+          - lvname: test_1
+            size: 5g
+            create: true
+            filesystem: ext4
+            mount: true
+            mntp: /mnt/test_1
+          - lvname: test_2
+            size: 10g
+            create: true
+            filesystem: ext4
+            mount: true
+            mntp: /mnt/test_2
+    manage_lvm: true
+  tasks:
+    - name: Include lvm
+      include_role:
+        name: ansible-manage-lvm
