@@ -1,10 +1,10 @@
 ---
-- name: "debug vg"
+- name: create_lv | Display Volume Group
   debug:
     var: vg
     verbosity: 2
 
-- name: "debug lvm"
+- name: create_lv | debug lvm
   loop: "{{ vg.lvnames | default([]) }}"
   debug:
     var: lv
@@ -12,23 +12,22 @@
   loop_control:
     loop_var: lv
 
-- name: manage_lvm | creating new LVM logical volume(s)
+- name: create_lv | creating new LVM logical volume(s)
   lvol:
     vg: "{{ vg.vgname }}"
     lv: "{{ lv.lvname }}"
     size: "{{ lv.size }}"
-    shrink: no
+    shrink: false
     opts: "{{ lv.opts | default('') }}"
-    state: "present"
+    state: present
   loop: "{{ vg.lvnames | default([])  }}"
   loop_control:
     loop_var: lv
   become: true
-  when: >
-    (
-    (vg.create is defined
-    and vg.create) and
-    (lv != 'None') and
-    (lv.create is defined and
-    lv.create)
-    )
+  when:
+    - vg.create is defined
+    - vg.create|bool
+    - lv is defined
+    - lv != 'None'
+    - lv.create is defined
+    - lv.create|bool

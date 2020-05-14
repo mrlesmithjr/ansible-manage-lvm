@@ -1,40 +1,40 @@
 ---
+- name: debian | Updating Apt Cache
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
 - name: debian | installing pre-reqs
-  package:
+  apt:
     name:
       - lvm2
       - scsitools
-    state: "present"
+    state: present
   become: true
 
 - name: debian | install xfs tools
-  package:
-    name: "xfsprogs"
-    state: "present"
-  become: yes
+  apt:
+    name: xfsprogs
+    state: present
+  become: true
   loop: "{{ lvm_groups|subelements('lvnames') }}"
-  when: >
-    (
-    (item.1 is defined and item.1 != 'None') and
-    (
-    item.1.filesystem is defined and
-    item.1.filesystem == "xfs"
-    )
-    and
-    (
-    item.1.create is defined and
-    item.1.create
-    )
-    )
+  when:
+    - item.1 is defined
+    - item.1 != 'None'
+    - item.1.filesystem is defined
+    - item.1.filesystem == "xfs"
+    - item.1.create is defined
+    - item.1.create|bool
 
 - name: debian | checking for scsi devices
-  command: "sg_scan"
+  command: sg_scan
   become: true
-  register: "scsi_devices"
+  register: scsi_devices
   changed_when: false
 
 - name: debian | rescanning for new disks added
-  command: "/sbin/rescan-scsi-bus"
+  command: /sbin/rescan-scsi-bus
   become: true
   changed_when: false
   when: scsi_devices['stdout'] | length
