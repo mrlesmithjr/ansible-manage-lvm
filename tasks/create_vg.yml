@@ -14,4 +14,3 @@
   loop: "{{ vg.lvnames | default([]) }}"
   loop_control:
     loop_var: lv
-
