@@ -1,15 +1,6 @@
 ---
 - name: manage_lvm | manage physical volume group creation
   include_tasks: create_vg.yml
-
-- name: manage_lvm | loop over logical volume group(s) to create logical volumes
-  include_tasks: create_lv.yml
-  loop: "{{ lvm_groups }}"
-  loop_control:
-    loop_var: vg
-
-- name: manage_lvm | loop over logical volume group(s) to create filesystems
-  include_tasks: create_fs.yml
   loop: "{{ lvm_groups }}"
   loop_control:
     loop_var: vg

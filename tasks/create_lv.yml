@@ -1,16 +1,9 @@
 ---
+
 - name: create_lv | Display Volume Group
   debug:
     var: vg
     verbosity: 2
-
-- name: create_lv | debug lvm
-  loop: "{{ vg.lvnames | default([]) }}"
-  debug:
-    var: lv
-    verbosity: 1
-  loop_control:
-    loop_var: lv
 
 - name: create_lv | creating new LVM logical volume(s)
   lvol:
@@ -20,10 +13,8 @@
     shrink: false
     opts: "{{ lv.opts | default('') }}"
     state: present
-  loop: "{{ vg.lvnames | default([])  }}"
-  loop_control:
-    loop_var: lv
   become: true
+  register: lvchanged
   when:
     - vg.create is defined
     - vg.create|bool
@@ -31,3 +22,10 @@
     - lv != 'None'
     - lv.create is defined
     - lv.create|bool
+
+- name: create_lv | debug changed attribute
+  debug:
+    var: lvchanged
+
+- name: create_lv | configuring FS
+  include_tasks: create_fs.yml
