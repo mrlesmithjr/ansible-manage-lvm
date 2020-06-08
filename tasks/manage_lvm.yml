@@ -21,7 +21,7 @@
     state: absent
     force: true
   become: true
-  loop: "{{ lvm_groups|subelements('lvnames') }}"
+  loop: "{{ lvm_groups|subelements('lvnames', {'skip_missing': true}) }}"
   when:
     - item.1 is defined
     - item.1 != 'None'

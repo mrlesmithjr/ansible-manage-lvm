@@ -1,0 +1,29 @@
+---
+driver:
+  name: vagrant
+  provider:
+    name: libvirt
+lint: yamllint . && flake8 && ansible-lint
+platforms:
+  - name: Fedora-Molecule-Volumes-KVM
+    box: fedora/31-cloud-base
+    cpu: 2
+    memory: 2048
+    provider_raw_config_args:
+      - "storage :file, :size => '1G', :device => 'vdb'"
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      forks: 20
+    ssh_connection:
+      pipelining: true
+      ssh_args: -o ControlMaster=auto -o ControlPersist=600s
+verifier:
+  name: testinfra
+  env:
+    PYTHONWARNINGS: "ignore:.*U.*mode is deprecated:DeprecationWarning"
+  options:
+    v: 1
+scenario:
+  name: kvmonlyvg

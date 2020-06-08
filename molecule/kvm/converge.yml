@@ -15,7 +15,7 @@
             filesystem: ext4
             mount: true
             mntp: "/var/lib/mountpoint"
-          - lvname: my_lv2
+          - lvname: my_lw
             size: 20%VG
             opts: "--wipesignatures y"
             mount: true

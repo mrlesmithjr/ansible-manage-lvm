@@ -88,6 +88,7 @@
   when:
     - vg.create is defined
     - vg.create|bool
+    - lv is defined
     - lv != 'None'
     - lv.create is defined
     - lv.create|bool
