@@ -1,11 +1,16 @@
 ---
 - name: create_vg | creating new LVM volume group(s)
   lvg:
-    vg: "{{ item.vgname }}"
-    pvs: "{{ item.disks | join(',') }}"
+    vg: "{{ vg.vgname }}"
+    pvs: "{{ vg.disks | join(',') }}"
     state: present
   become: true
-  loop: "{{ lvm_groups }}"
   when:
-    - item.create is defined
-    - item.create|bool
+    - vg.create is defined
+    - vg.create|bool
+
+- name: manage_lvm | loop over logical volume group(s) to create logical volumes
+  include_tasks: create_lv.yml
+  loop: "{{ vg.lvnames | default([]) }}"
+  loop_control:
+    loop_var: lv
