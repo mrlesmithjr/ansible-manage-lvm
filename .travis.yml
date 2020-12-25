@@ -1,8 +1,6 @@
 ---
 dist: bionic
 
-dist: bionic
-
 language: python
 python:
   - "3.8"
