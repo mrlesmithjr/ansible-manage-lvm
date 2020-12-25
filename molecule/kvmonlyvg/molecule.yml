@@ -6,7 +6,7 @@ driver:
 lint: yamllint . && flake8 && ansible-lint
 platforms:
   - name: Fedora-Molecule-Volumes-KVM
-    box: fedora/31-cloud-base
+    box: fedora/33-cloud-base
     cpu: 2
     memory: 2048
     provider_raw_config_args:
