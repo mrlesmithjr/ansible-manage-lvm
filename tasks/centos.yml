@@ -34,6 +34,13 @@
     - lv.1.create is defined
     - lv.1.create|bool
 
+- name: centos | install gdisk
+  package:
+    name: gdisk
+  become: true
+  when:
+    - manage_disks | bool
+
 - name: centos | check for scsi adapters
   find:
     paths: "/sys/class/scsi_host"

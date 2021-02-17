@@ -6,6 +6,12 @@
 - include_tasks: centos.yml
   when: ansible_facts.os_family == "RedHat"
 
+- include_tasks: manage_disks.yml
+  when:
+    - lvm_groups is defined
+    - lvm_groups.disks | length
+    - manage_disks | bool
+
 - include_tasks: manage_lvm.yml
   when:
     - lvm_groups is defined

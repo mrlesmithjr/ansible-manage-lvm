@@ -27,6 +27,13 @@
     - item.1.create is defined
     - item.1.create|bool
 
+- name: debian | install gdisk
+  apt:
+    name: gdisk
+  become: true
+  when:
+    - manage_disks | bool
+
 - name: debian | checking for scsi devices
   command: sg_scan
   become: true

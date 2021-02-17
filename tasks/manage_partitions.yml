@@ -1,0 +1,14 @@
+---
+- name: "manage_disks | collect partitions for the {{ item.device }} disk"
+  parted:
+    device: "{{ item.device }}"
+  register: device_info
+
+- name: "manage_disks | gather partition number {{ item.number }} info"
+  set_fact:
+    partition: "{{ device_info.partitions | selectattr('num', 'match', item.number) | list | first | default({}) }}"
+
+# rely on the sgdisk internal logic because the parted module itself can't calculate where the free space begins
+- name: "manage_disks | create partition number {{ item.number }} on the {{ item.device }} disk"
+  command: "sgdisk {{ item.device }} -n {{ item.number }} -t 0:8e00 -c 0:'Linux LVM'"
+  when: not partition
