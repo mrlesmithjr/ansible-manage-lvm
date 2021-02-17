@@ -1,13 +1,6 @@
 ---
-- name: manage_disks | split the lvm_groups disks onto device name and partition number
-  set_fact:
-    sgdisk: "{{ sgdisk | default([]) + [ {'number': number, 'device': device} ] }}"
-  loop: "{{ lvm_groups.disks }}"
-  when: item | regex_search('\/dev\/[shv]d[a-z][0-9]+')
-  vars:
-    number: "{{ item | regex_findall('\\/dev\\/[shv]d[a-z]([0-9]+)') | first }}"
-    device: "{{ item | regex_findall('(\\/dev\\/[shv]d[a-z])[0-9]+') | first }}"
-
-- name: manage_disks | manage the partitions
-  include_tasks: manage_partitions.yml
-  loop: "{{ sgdisk }}"
+- name: manage_disks | manage disks and partition creation
+  include_tasks: create_disks.yml
+  loop: "{{ lvm_groups }}"
+  loop_control:
+    loop_var: lvm_group

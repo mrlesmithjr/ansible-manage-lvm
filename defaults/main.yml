@@ -6,6 +6,10 @@ lvm_groups: []
 #     - /dev/sda5
 #     - /dev/sdc
 #     - /dev/sdd
+#   parts:
+#     - disk: "/dev/sda5"
+#       start: 0
+#       end: "+5G"
 #   # defines if VG should exist or be removed
 #   # true or false
 #   create: true

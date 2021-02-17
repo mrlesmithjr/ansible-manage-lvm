@@ -41,6 +41,13 @@
   when:
     - manage_disks | bool
 
+- name: centos | install parted
+  package:
+    name: parted
+  become: true
+  when:
+    - manage_disks | bool
+
 - name: centos | check for scsi adapters
   find:
     paths: "/sys/class/scsi_host"

@@ -34,6 +34,13 @@
   when:
     - manage_disks | bool
 
+- name: debian | install parted
+  apt:
+    name: parted
+  become: true
+  when:
+    - manage_disks | bool
+
 - name: debian | checking for scsi devices
   command: sg_scan
   become: true

@@ -1,0 +1,21 @@
+---
+- name: create_disks | prepare sgdisk fact for creating partitions
+  set_fact:
+    sgdisk: "{{ sgdisk | default([]) + [ {'number': number, 'device': device, 'start': start, 'end': end} ] }}"
+  loop: "{{ lvm_group.parts }}"
+  loop_control:
+    loop_var: parts_item
+  when:
+    - parts_item.disk | regex_search('\/dev\/[shv]d[a-z][0-9]+')
+    - parts_item.disk in lvm_group.disks
+    - parts_item.start | default('0') | string | regex_search('^[+-]*\d+[KMGTP]*$')
+    - parts_item.end | default('0') | string | regex_search('^[+-]*\d+[KMGTP]*$')
+  vars:
+    number: "{{ parts_item.disk | regex_findall('\\/dev\\/[shv]d[a-z]([0-9]+)') | first }}"
+    device: "{{ parts_item.disk | regex_findall('(\\/dev\\/[shv]d[a-z])[0-9]+') | first }}"
+    start: "{{ parts_item.start | default('0') | string }}"
+    end: "{{ parts_item.end | default('0') | string }}"
+
+- name: create_disks | create the partitions
+  include_tasks: create_partitions.yml
+  loop: "{{ sgdisk | default([]) }}"
