@@ -6,14 +6,22 @@
   become: true
 
 - name: centos | check for nvme devices
-  shell: cat /proc/partitions |awk '{print $4}' | grep -q nvme. ; echo $?
+  shell: |
+    set -o pipefail
+    cat /proc/partitions | awk '{print $4}' | grep -q nvme. ; echo $?
+  args:
+    executable: /bin/bash
   register: blkdev_nvme
   changed_when: false
 
 - name: centos | check for amazon ebs devices
-  shell: lsblk -O -J| grep -qi "amazon elastic block store" ; echo $?
+  shell: |
+    set -o pipefail 
+    lsblk -O -J | grep -qi "amazon elastic block store" ; echo $?
   register: blkdev_awsebs
   changed_when: false
+  args:
+    executable: /bin/bash
 
 - name: centos | set flag for nvme subsystem
   set_fact:
