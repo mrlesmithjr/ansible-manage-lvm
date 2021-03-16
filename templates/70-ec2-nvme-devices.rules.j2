@@ -1,0 +1,3 @@
+# ebs nvme to scsi device naming mapping
+KERNEL=="nvme[0-9]*n[0-9]*", ENV{DEVTYPE}=="disk", ATTRS{model}=="Amazon Elastic Block Store", PROGRAM="{{ ebsnvme_scrip_helper_path }} /dev/%k", SYMLINK+="%c"
+

@@ -1,0 +1,15 @@
+#!/bin/bash
+# This script uses go version of ebsnvme-id to provide
+# SCSI Disk device name links for nvme devices
+#
+# links:
+#
+#    https://www.logicworks.com/blog/2018/03/manage-aws-ebs-volumes-c5-m5-puppet-chef-ansible/
+#    https://github.com/mvisonneau/go-ebsnvme
+#    https://gist.github.com/lbernail/d851e5b06eb32180a4b8ead2ce4f45db
+#      and working forks like:
+#      (keenan-v1/ebsnvme-id) https://gist.github.com/keenan-v1/aee92cd7383ee02de2a817a004917a03
+#
+
+{{ ebsnvme_binary_helper_path }} -n $1 | awk -F '/' '{print $3}'
+

@@ -61,3 +61,12 @@ lvm_groups: []
 # Defines if LVM will be managed by role
 # default is false to ensure nothing is changed by accident.
 manage_lvm: false
+
+###     nvme to scsi device name map binary helper
+ebsnvme_binary_helper_ver: '0.1.3'
+ebsnvme_binary_helper_tmp: '/tmp'
+ebsnvme_binary_helper_path: '/sbin/go-ebsnvme'
+
+###     nvme to scsi device name map script helper
+ebsnvme_scrip_helper_path: '/usr/local/bin/ebsnvme-id'
+
