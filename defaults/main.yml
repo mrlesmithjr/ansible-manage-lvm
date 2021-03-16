@@ -69,4 +69,3 @@ ebsnvme_binary_helper_path: '/sbin/go-ebsnvme'
 
 ###     nvme to scsi device name map script helper
 ebsnvme_scrip_helper_path: '/usr/local/bin/ebsnvme-id'
-

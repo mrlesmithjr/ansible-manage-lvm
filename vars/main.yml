@@ -3,4 +3,3 @@
 
 ebsnvme_binary_helper_file: go-ebsnvme_{{ ebsnvme_binary_helper_ver }}_linux_amd64.tar.gz
 ebsnvme_binary_helper_url:  https://github.com/mvisonneau/go-ebsnvme/releases/download/{{ ebsnvme_binary_helper_ver }}/{{ ebsnvme_binary_helper_file }}
-
