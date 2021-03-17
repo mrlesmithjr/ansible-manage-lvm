@@ -11,7 +11,7 @@
 
 ### workaround: auto pvresize waiting for upgrade to new module supporting integrated pvresize
 ###             ref: https://docs.ansible.com/ansible/3/collections/community/general/lvg_module.html
-- name: create_vg | pvresize to max (implemented from ansible 2.10 and above)
+- name: create_vg | pvresize to max available free space
   command: "pvresize {{ pv }}"
   loop: "{{ vg.disks | default([]) }}"
   loop_control:
