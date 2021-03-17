@@ -21,7 +21,6 @@
     - vg.create is defined
     - vg.create|bool
     - pvresize_to_max|bool
-    - ansible_version.full is version('2.10', '<')
 
 - name: manage_lvm | loop over logical volume group(s) to create logical volumes
   include_tasks: create_lv.yml
