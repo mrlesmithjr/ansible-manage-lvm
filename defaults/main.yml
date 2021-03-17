@@ -69,3 +69,9 @@ ebsnvme_binary_helper_path: '/sbin/go-ebsnvme'
 
 ###     nvme to scsi device name map script helper
 ebsnvme_scrip_helper_path: '/usr/local/bin/ebsnvme-id'
+
+###     auto pvresize (waiting until ansible 2.10 or above as collections have new lvg with integrated pvresize)
+###     waiting for new module in collection set to true or run pvresize manually on remote systems
+###     https://docs.ansible.com/ansible/3/collections/community/general/lvg_module.html
+###
+pvresize_to_max: false
