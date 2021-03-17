@@ -114,3 +114,10 @@
   command: /usr/bin/rescan-scsi-bus.sh
   become: true
   changed_when: false
+  when: scsi_devices.stdout != ""
+
+- name: centos | rescanning for resized disks
+  command: /usr/bin/rescan-scsi-bus.sh -s
+  become: true
+  changed_when: false
+  when: scsi_devices.stdout != ""
