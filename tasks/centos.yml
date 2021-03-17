@@ -16,7 +16,7 @@
 
 - name: centos | check for amazon ebs devices
   shell: |
-    set -o pipefail 
+    set -o pipefail
     lsblk -O -J | grep -qi "amazon elastic block store" ; echo $?
   register: blkdev_awsebs
   changed_when: false
@@ -46,6 +46,7 @@
         src: "{{ ebsnvme_binary_helper_tmp }}/{{ ebsnvme_binary_helper_file }}"
         dest: "{{ ebsnvme_binary_helper_tmp }}/"
         remote_src: yes
+        mode: 0755
       changed_when: false
 
     - name: centos | copy binary helper
@@ -65,6 +66,7 @@
       template:
         src: '70-ec2-nvme-devices.rules.j2'
         dest: '/etc/udev/rules.d/70-ec2-nvme-devices.rules'
+        mode: 0755
       register: udev_rule
 
     - name: centos | reload and trigger udev rules
