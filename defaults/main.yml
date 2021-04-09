@@ -37,6 +37,17 @@ lvm_groups: []
 #       filesystem: ext4
 #       mount: true
 #       mntp: /
+# - vgname: no-vg
+#   disks:
+#     - /dev/sde1
+#     - /dev/sde2
+#   # repartition the disk with two equal sized pratitions only. no vgs/lvs.
+#   parts:
+#     - disk: /dev/sde1
+#       zap: true
+#       end: +2G
+#     - disk: /dev/sde2
+#       end: +2G
 # - vgname: test-vg
 #   disks:
 #     - /dev/sdb

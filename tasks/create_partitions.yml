@@ -1,4 +1,8 @@
 ---
+- name: "create_partitions | zap boot structures for the {{ item.device }} disk"
+  command: "sgdisk {{ item.device }} -Z"
+  when: item.zap
+
 - name: "create_partitions | collect partitions for the {{ item.device }} disk"
   parted:
     device: "{{ item.device }}"
@@ -14,4 +18,4 @@
   when: not partition
 
 - name: "create_partitions | inform the operating system kernel of partition table changes"
-  command: "partprobe -s"
+  command: "partprobe -s {{ item.device }}"
