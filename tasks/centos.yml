@@ -5,6 +5,9 @@
     state: present
   become: true
 
+- include_tasks: amazon.yml
+  when: ansible_system_vendor == 'Amazon EC2'
+
 - name: centos | installing sg3_utils
   package:
     name: sg3_utils
@@ -45,3 +48,10 @@
   command: /usr/bin/rescan-scsi-bus.sh
   become: true
   changed_when: false
+  when: scsi_devices.stdout|length > 0
+
+- name: centos | rescanning for resized disks
+  command: /usr/bin/rescan-scsi-bus.sh -s
+  become: true
+  changed_when: false
+  when: scsi_devices.stdout|length > 0

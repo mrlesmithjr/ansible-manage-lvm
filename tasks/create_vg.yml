@@ -9,6 +9,19 @@
     - vg.create is defined
     - vg.create|bool
 
+### workaround: auto pvresize waiting for upgrade to new module supporting integrated pvresize
+###             ref: https://docs.ansible.com/ansible/3/collections/community/general/lvg_module.html
+- name: create_vg | pvresize to max available free space
+  command: "pvresize {{ pv }}"
+  loop: "{{ vg.disks | default([]) }}"
+  loop_control:
+    loop_var: pv
+  changed_when: false
+  when:
+    - vg.create is defined
+    - vg.create|bool
+    - pvresize_to_max|bool
+
 - name: manage_lvm | loop over logical volume group(s) to create logical volumes
   include_tasks: create_lv.yml
   loop: "{{ vg.lvnames | default([]) }}"

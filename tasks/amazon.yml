@@ -1,0 +1,70 @@
+---
+
+- name: amazon | check for nvme devices
+  shell: |
+    set -o pipefail
+    cat /proc/partitions | awk '{print $4}' | grep -q nvme. ; echo $?
+  args:
+    executable: /bin/bash
+  register: blkdev_nvme
+  changed_when: false
+
+- name: amazon | check for amazon ebs devices
+  shell: |
+    set -o pipefail
+    lsblk -O -J | grep -qi "amazon elastic block store" ; echo $?
+  register: blkdev_awsebs
+  changed_when: false
+  args:
+    executable: /bin/bash
+
+- name: amazon | set flag for nvme subsystem
+  set_fact:
+    device_is_nvme: "{{ true if (blkdev_nvme.stdout == '0') else false }}"
+
+- name: amazon | set flag for aws ebs devices
+  set_fact:
+    device_is_awsebs: "{{ true if (blkdev_awsebs.stdout == '0') else false }}"
+
+- name: Block to map renamed ec2 ebs nvmeXnY devices to their original sdX/xvdX names
+  when: device_is_nvme and device_is_awsebs|bool
+  become: true
+  block:
+    - name: amazon | download nvme mapping binary helper
+      get_url:
+        url: "{{ ebsnvme_binary_helper_url }}"
+        dest: "{{ ebsnvme_binary_helper_tmp }}/"
+      changed_when: false
+
+    - name: amazon | extract binary helper
+      unarchive:
+        src: "{{ ebsnvme_binary_helper_tmp }}/{{ ebsnvme_binary_helper_file }}"
+        dest: "{{ ebsnvme_binary_helper_tmp }}/"
+        remote_src: yes
+        mode: 0755
+      changed_when: false
+
+    - name: amazon | copy binary helper
+      copy:
+        src: "{{ ebsnvme_binary_helper_tmp }}/go-ebsnvme"
+        dest: "{{ ebsnvme_binary_helper_path }}"
+        mode: a+x
+        remote_src: yes
+
+    - name: amazon | template script helper
+      template:
+        src: 'ebsnvme-id.j2'
+        dest: "{{ ebsnvme_scrip_helper_path }}"
+        mode: a+x
+
+    - name: amazon | template udev rule
+      template:
+        src: '70-ec2-nvme-devices.rules.j2'
+        dest: '/etc/udev/rules.d/70-ec2-nvme-devices.rules'
+        mode: 0755
+      register: udev_rule
+
+    - name: amazon | reload and trigger udev rules
+      shell:
+        cmd: udevadm control --reload-rules && udevadm trigger
+      when: udev_rule.changed
