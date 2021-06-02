@@ -1,4 +1,11 @@
 ---
+# Check if the filesystem is already mounted 
+- name: "create_fs | check if fs mounted"
+  shell: "df {{ lv.mntp }} | grep {{ vg.vgname }} | grep {{ lv.lvname }} | wc -l"
+  become: yes
+  ignore_errors: true
+  changed_when: false
+  register: matchingmntp
 
 # unable to resize xfs: looks like we've to reference the mountpoint instead of the device
 - name: create_fs | check already converted
@@ -10,6 +17,8 @@
   ignore_errors: true
   changed_when: false
   when:
+    - matchingmntp is defined
+    - matchingmntp.stdout != "0"
     - lv is defined and lv != 'None'
     - lv.filesystem is defined
     - lv.filesystem == "xfs"
@@ -53,7 +62,7 @@
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
   become: true
   when:
-    - mountedxfs is failed
+    - mountedxfs is failed or matchingmntp.stdout == "0"
     - vg.create is defined
     - vg.create|bool
     - lv is defined
