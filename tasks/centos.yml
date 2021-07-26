@@ -6,7 +6,7 @@
   become: true
 
 - include_tasks: amazon.yml
-  when: ansible_system_vendor == 'Amazon EC2'
+  when: ansible_facts.system_vendor == 'Amazon EC2'
 
 - name: centos | installing sg3_utils
   package:
