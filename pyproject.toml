@@ -6,7 +6,7 @@ authors = ["Larry Smith Jr. <mrlesmithjr@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-ansible = "2.9.7"
+ansible = "4.2.0"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.1"
