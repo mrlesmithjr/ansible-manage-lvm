@@ -8,12 +8,6 @@
 - include_tasks: amazon.yml
   when: ansible_facts.system_vendor == 'Amazon EC2'
 
-- name: centos | installing sg3_utils
-  package:
-    name: sg3_utils
-    state: present
-  become: true
-
 - name: centos | debug lvg
   debug:
     var: lv
@@ -38,20 +32,36 @@
     - lv.1.create is defined
     - lv.1.create|bool
 
-- name: centos | checking for scsi devices
-  command: sg_scan
+- name: centos | check for scsi adapters
+  find:
+    paths: "/sys/class/scsi_host"
+    file_type: any
   become: true
-  register: scsi_devices
-  changed_when: false
+  register: scsi_adapters
 
-- name: centos | rescanning for new disks
-  command: /usr/bin/rescan-scsi-bus.sh
-  become: true
-  changed_when: false
-  when: scsi_devices.stdout|length > 0
+- block:
+  - name: centos | installing sg3_utils
+    package:
+    name: sg3_utils
+    state: present
+    become: true
 
-- name: centos | rescanning for resized disks
-  command: /usr/bin/rescan-scsi-bus.sh -s
-  become: true
-  changed_when: false
-  when: scsi_devices.stdout|length > 0
+  - name: centos | checking for scsi devices
+    command: sg_scan
+    become: true
+    register: scsi_devices
+    changed_when: false
+
+  - name: centos | rescanning for new disks
+    command: /usr/bin/rescan-scsi-bus.sh
+    become: true
+    changed_when: false
+    when: scsi_devices.stdout|length > 0
+
+  - name: centos | rescanning for resized disks
+    command: /usr/bin/rescan-scsi-bus.sh -s
+    become: true
+    changed_when: false
+    when: scsi_devices.stdout|length > 0
+
+  when: scsi_adapters.matched > 0
