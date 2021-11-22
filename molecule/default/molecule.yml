@@ -3,7 +3,10 @@ driver:
   name: vagrant
   provider:
     name: virtualbox
-lint: yamllint . && flake8 && ansible-lint
+lint: |
+  yamllint .
+  ansible-lint
+  flake8
 platforms:
   - name: CentOS-Molecule-LVM
     box: mrlesmithjr/centos7
