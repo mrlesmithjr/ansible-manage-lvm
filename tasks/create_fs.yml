@@ -34,7 +34,11 @@
   filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
-    resizefs: yes
+    resizefs: "{{ lv.filesystem not in resize_exclude_list }}"
+  vars:
+    resize_exclude_list:
+      - swap
+      - xfs
   become: true
   when:
     - vg.create is defined
@@ -45,23 +49,6 @@
     - lv.create|bool
     - lv.filesystem is defined
     - lv.filesystem != 'None'
-    - lv.filesystem != 'xfs'
-
-- name: create_fs | creating new xfs filesystem on new LVM logical volume(s)
-  filesystem:
-    fstype: "{{ lv.filesystem }}"
-    dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
-  become: true
-  when:
-    - mountedxfs is failed
-    - vg.create is defined
-    - vg.create|bool
-    - lv is defined
-    - lv != 'None'
-    - lv.create is defined
-    - lv.create|bool
-    - lv.filesystem is defined
-    - lv.filesystem == 'xfs'
 
 - name: create_fs | mounting new filesystem(s)
   mount:
