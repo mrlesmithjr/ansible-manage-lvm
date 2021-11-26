@@ -13,6 +13,7 @@
     shrink: false
     opts: "{{ lv.opts | default('') }}"
     state: present
+    force: "{{ lv.force | default(False) }}"
   become: true
   register: lvchanged
   when:
