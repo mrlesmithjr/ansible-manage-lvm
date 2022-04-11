@@ -55,13 +55,13 @@
     changed_when: false
 
   - name: centos | rescanning for new disks
-    command: /usr/bin/rescan-scsi-bus.sh
+    command: "{{ rescan_scsi_command }}"
     become: true
     changed_when: false
     when: scsi_devices.stdout|length > 0
 
   - name: centos | rescanning for resized disks
-    command: /usr/bin/rescan-scsi-bus.sh -s
+    command: "{{ rescan_scsi_command }} -s"
     become: true
     changed_when: false
     when: scsi_devices.stdout|length > 0
