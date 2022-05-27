@@ -5,6 +5,7 @@
     rescan_scsi_command: "/sbin/rescan-scsi-bus"
   when:
     - ansible_distribution | replace(' ','') | lower == 'debian'
+    - ansible_distribution_release not in ('bookworm', 'sid')
     - ansible_distribution_major_version is version(10, '<=')
 
 - include_tasks: debian.yml
