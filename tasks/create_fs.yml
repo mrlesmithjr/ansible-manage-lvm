@@ -34,7 +34,7 @@
   filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
-    resizefs: yes
+    resizefs: "{{ lv.filesystem != 'swap' }}"
   become: true
   when:
     - vg.create is defined
@@ -45,7 +45,6 @@
     - lv.create|bool
     - lv.filesystem is defined
     - lv.filesystem != 'None'
-    - lv.filesystem != 'swap'
     - lv.filesystem != 'xfs'
 
 - name: create_fs | creating new xfs filesystem on new LVM logical volume(s)
