@@ -31,6 +31,8 @@ lvm_groups: []
 #       size: 40g
 #       create: true
 #       filesystem: ext4
+#       # Defines options passed to the filesystem creation command
+#       fsopts:
 #       mount: true
 #       mntp: /
 # - vgname: test-vg
@@ -57,6 +59,20 @@ lvm_groups: []
 #   lvnames:
 #   # Set to None to only create LVM VG w/out creating LVM LVOLS
 #    - None
+#   # Using fsopts to create a docker compatible xfs volume
+# - vgname: docker-volumes
+#   disks:
+#     - /dev/vdc
+#     - /dev/vdd
+#   create: true
+#   lvnames:
+#     - lvname: docker_1
+#       size: 100%FREE
+#       create: true
+#       filesystem: xfs
+#       fsopts: -n ftype=1
+#       mount: true
+#       mntp: /var/lib/docker
 
 # Defines if LVM will be managed by role
 # default is false to ensure nothing is changed by accident.
