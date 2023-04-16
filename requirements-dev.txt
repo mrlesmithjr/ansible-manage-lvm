@@ -33,7 +33,7 @@ filelock==3.4.0; python_version >= "3.6" and python_full_version < "3.0.0" or py
 flake8==4.0.1; python_version >= "3.6"
 ghp-import==2.0.2; python_version >= "3.6"
 gitdb==4.0.9; python_version >= "3.7"
-gitpython==3.1.24; python_version >= "3.7"
+gitpython==3.1.30; python_version >= "3.7"
 html5lib==1.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
 identify==2.4.0; python_full_version >= "3.6.1"
 idna==3.3; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
