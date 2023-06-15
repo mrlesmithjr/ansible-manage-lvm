@@ -1,18 +1,18 @@
 ---
 - name: manage_lvm | manage physical volume group creation
-  include_tasks: create_vg.yml
+  ansible.builtin.include_tasks: create_vg.yml
   loop: "{{ lvm_groups }}"
   loop_control:
     loop_var: vg
 
 - name: manage_lvm | Removing LVM logical volume(s)
-  lvol:
+  community.general.system.lvol:
     vg: "{{ item.0.vgname }}"
     lv: "{{ item.1.lvname }}"
     state: absent
     force: true
   become: true
-  loop: "{{ lvm_groups|subelements('lvnames', {'skip_missing': true}) }}"
+  loop: "{{ lvm_groups | subelements('lvnames', {'skip_missing': true}) }}"
   when:
     - item.1 is defined
     - item.1 != 'None'
@@ -20,7 +20,7 @@
     - not item.1.create|bool
 
 - name: manage_lvm | Removing LVM volume group(s)
-  lvg:
+  community.general.system.lvg:
     vg: "{{ item.vgname }}"
     pvs: "{{ item.disks | join(',') }}"
     state: absent

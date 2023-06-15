@@ -3,15 +3,11 @@ galaxy_info:
   author: Larry Smith Jr.
   description: Ansible role to manage(create, extend, resize) LVM Groups/Logical Volumes.
   namespace: mrlesmithjr
-  role_name: manage-lvm
+  role_name: manage_lvm
 
   license: MIT
-  min_ansible_version: 1.2
+  min_ansible_version: "1.2"
   platforms:
-    - name: fedora
-      versions:
-        - 31
-
     - name: EL
       versions:
         - all

@@ -1,17 +1,18 @@
 ---
 - name: centos | installing lvm2 and sg3_utils
-  package:
+  ansible.builtin.package:
     name:
       - lvm2
       - sg3_utils
     state: present
   become: true
 
-- include_tasks: amazon.yml
+- name: Specific tasks for Amazon EC2
+  ansible.builtin.include_tasks: amazon.yml
   when: ansible_facts.system_vendor == 'Amazon EC2'
 
 - name: centos | debug lvg
-  debug:
+  ansible.builtin.debug:
     var: lv
     verbosity: 3
   loop: "{{ lookup('subelements', lvm_groups, 'lvnames', {'skip_missing': True}, wantlist=True) }}"
@@ -19,7 +20,7 @@
     loop_var: lv
 
 - name: centos | install xfs tools
-  package:
+  ansible.builtin.package:
     name: "xfsprogs"
     state: "present"
   become: true
@@ -35,35 +36,35 @@
     - lv.1.create|bool
 
 - name: centos | check for scsi adapters
-  find:
+  ansible.builtin.find:
     paths: "/sys/class/scsi_host"
     file_type: any
   become: true
   register: scsi_adapters
 
-- block:
-  - name: centos | installing sg3_utils
-    package:
-      name: sg3_utils
-      state: present
-    become: true
-
-  - name: centos | checking for scsi devices
-    command: sg_scan
-    become: true
-    register: scsi_devices
-    changed_when: false
-
-  - name: centos | rescanning for new disks
-    command: "{{ rescan_scsi_command }}"
-    become: true
-    changed_when: false
-    when: scsi_devices.stdout|length > 0
-
-  - name: centos | rescanning for resized disks
-    command: "{{ rescan_scsi_command }} -s"
-    become: true
-    changed_when: false
-    when: scsi_devices.stdout|length > 0
-
+- name: centos | Check for new disks
   when: scsi_adapters.matched > 0
+  block:
+    - name: centos | installing sg3_utils
+      ansible.builtin.package:
+        name: sg3_utils
+        state: present
+      become: true
+
+    - name: centos | checking for scsi devices
+      ansible.builtin.command: sg_scan
+      become: true
+      register: scsi_devices
+      changed_when: false
+
+    - name: centos | rescanning for new disks
+      ansible.builtin.command: "{{ rescan_scsi_command }}"
+      become: true
+      changed_when: false
+      when: scsi_devices.stdout|length > 0
+
+    - name: centos | rescanning for resized disks
+      ansible.builtin.command: "{{ rescan_scsi_command }} -s"
+      become: true
+      changed_when: false
+      when: scsi_devices.stdout|length > 0

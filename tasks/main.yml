@@ -1,20 +1,23 @@
 ---
 # tasks file for ansible-manage-lvm
 - name: Set rescan_scsi_command for old debian version
-  set_fact:
+  ansible.builtin.set_fact:
     rescan_scsi_command: "/sbin/rescan-scsi-bus"
   when:
     - ansible_facts.distribution | replace(' ','') | lower == 'debian'
     - ansible_facts.distribution_release not in ('bookworm', 'sid')
     - ansible_facts.distribution_major_version is version(10, '<=')
 
-- include_tasks: debian.yml
+- name: Debian specific tasks
+  ansible.builtin.include_tasks: debian.yml
   when: ansible_facts.os_family == "Debian"
 
-- include_tasks: centos.yml
+- name: RHEL specific tasks
+  ansible.builtin.include_tasks: centos.yml
   when: ansible_facts.os_family == "RedHat"
 
-- include_tasks: manage_lvm.yml
+- name: Manage LVM
+  ansible.builtin.include_tasks: manage_lvm.yml
   when:
     - lvm_groups is defined
     - manage_lvm|bool
