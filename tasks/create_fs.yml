@@ -52,6 +52,7 @@
   filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
+    opts: "{{ lv.fsopts | default(omit) }}"
   become: true
   when:
     - mountedxfs is failed
