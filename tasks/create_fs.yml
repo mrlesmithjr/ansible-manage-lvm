@@ -1,11 +1,10 @@
 ---
-
 # unable to resize xfs: looks like we've to reference the mountpoint instead of the device
 - name: create_fs | check already converted
   # at least xfs is executed twice if the partition has changed in the meantime
   # then it tries to recreate the fs on the mounted fs which indeed fails...
-  shell: "xfs_info {{ lv.mntp }} | grep -c 'ftype=1'"
-  become: yes
+  ansible.builtin.shell: "xfs_info {{ lv.mntp }} | grep -c 'ftype=1'"
+  become: true
   register: mountedxfs
   ignore_errors: true
   changed_when: false
@@ -17,7 +16,7 @@
     - lv.create|bool
 
 - name: create_fs | unmounting filesystem(s)
-  mount:
+  ansible.posix.mount:
     path: "{{ lv.mntp }}"
     src: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
     fstype: "{{ lv.filesystem | default(omit) }}"
@@ -31,7 +30,7 @@
     - lv.filesystem != "swap"
 
 - name: create_fs | creating new filesystem on new LVM logical volume(s)
-  filesystem:
+  community.general.system.filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
     resizefs: yes
@@ -49,7 +48,7 @@
     - lv.filesystem != 'xfs'
 
 - name: create_fs | creating new xfs filesystem on new LVM logical volume(s)
-  filesystem:
+  community.general.system.filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
     opts: "{{ lv.fsopts | default(omit) }}"
@@ -66,7 +65,7 @@
     - lv.filesystem == 'xfs'
 
 - name: create_fs | mounting new filesystem(s)
-  mount:
+  ansible.posix.mount:
     path: "{{ lv.mntp }}"
     src: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
     fstype: "{{ lv.filesystem }}"
@@ -83,8 +82,8 @@
     - lv.mount is defined
     - lv.mount|bool
 
-- name: create_fs | resizing xfs filesystem on new LVM logical volume(s)
-  command: "xfs_growfs {{ lv.mntp }}"
+- name: create_fs | resizing xfs filesystem on new LVM logical volume(s) # noqa no-changed-when
+  ansible.builtin.command: "xfs_growfs {{ lv.mntp }}"
   become: true
   when:
     - vg.create is defined

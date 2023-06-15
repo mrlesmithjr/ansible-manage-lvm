@@ -37,6 +37,5 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
-      - name: molecule lint
-        run: |
-          molecule lint
+      - name: Check linting with pre-commit
+        run: pre-commit run --all-files

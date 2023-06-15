@@ -18,5 +18,5 @@
     manage_lvm: true
   tasks:
     - name: "Include lvm"
-      include_role:
+      ansible.builtin.include_role:
         name: "ansible-manage-lvm"

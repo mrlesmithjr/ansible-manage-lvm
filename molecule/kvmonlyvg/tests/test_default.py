@@ -8,4 +8,4 @@ def test_lvm_package_shall_be_installed(host):
 def test_non_persistent_volume_group_is_created(host):
     command = """sudo vgdisplay | grep -c 'my_vg'"""
     cmd = host.run(command)
-    assert '1' in cmd.stdout
+    assert "1" in cmd.stdout
