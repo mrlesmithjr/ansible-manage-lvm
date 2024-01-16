@@ -9,6 +9,8 @@ lvm_groups: []
 #   # defines if VG should exist or be removed
 #   # true or false
 #   create: true
+#   # defines if PV should be resized to max size
+#   pvresize: false
 #   lvnames:
 #     - lvname: swap_1
 #       # Define size of lvol
@@ -86,8 +88,5 @@ ebsnvme_binary_helper_path: '/sbin/go-ebsnvme'
 ###     nvme to scsi device name map script helper
 ebsnvme_scrip_helper_path: '/usr/local/bin/ebsnvme-id'
 
-###     auto pvresize (waiting until ansible 2.10 or above as collections have new lvg with integrated pvresize)
-###     waiting for new module in collection set to true or run pvresize manually on remote systems
-###     https://docs.ansible.com/ansible/3/collections/community/general/lvg_module.html
-###
+###   resize all pv's to max size
 pvresize_to_max: false
