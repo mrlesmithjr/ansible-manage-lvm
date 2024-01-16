@@ -1,6 +1,6 @@
 ---
 - name: create_vg | creating new LVM volume group(s)
-  community.general.system.lvg:
+  community.general.lvg:
     vg: "{{ vg.vgname }}"
     pvs: "{{ vg.disks | join(',') }}"
     state: present

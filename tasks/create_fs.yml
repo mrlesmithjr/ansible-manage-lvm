@@ -30,7 +30,7 @@
     - lv.filesystem != "swap"
 
 - name: create_fs | creating new filesystem on new LVM logical volume(s)
-  community.general.system.filesystem:
+  community.general.filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
     resizefs: yes
@@ -48,7 +48,7 @@
     - lv.filesystem != 'xfs'
 
 - name: create_fs | creating new xfs filesystem on new LVM logical volume(s)
-  community.general.system.filesystem:
+  community.general.filesystem:
     fstype: "{{ lv.filesystem }}"
     dev: "/dev/{{ vg.vgname }}/{{ lv.lvname }}"
     opts: "{{ lv.fsopts | default(omit) }}"

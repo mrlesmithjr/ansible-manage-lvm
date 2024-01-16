@@ -6,7 +6,7 @@
     loop_var: vg
 
 - name: manage_lvm | Removing LVM logical volume(s)
-  community.general.system.lvol:
+  community.general.lvol:
     vg: "{{ item.0.vgname }}"
     lv: "{{ item.1.lvname }}"
     state: absent
@@ -20,7 +20,7 @@
     - not item.1.create|bool
 
 - name: manage_lvm | Removing LVM volume group(s)
-  community.general.system.lvg:
+  community.general.lvg:
     vg: "{{ item.vgname }}"
     pvs: "{{ item.disks | join(',') }}"
     state: absent

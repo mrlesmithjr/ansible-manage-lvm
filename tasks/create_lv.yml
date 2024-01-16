@@ -5,7 +5,7 @@
     verbosity: 2
 
 - name: create_lv | creating new LVM logical volume(s)
-  community.general.system.lvol:
+  community.general.lvol:
     vg: "{{ vg.vgname }}"
     lv: "{{ lv.lvname }}"
     size: "{{ lv.size }}"
