@@ -10,7 +10,7 @@ ansible = "8.5.0"
 
 [tool.poetry.group.dev.dependencies]
 ansible-lint = "6.8.7"
-black = "^22.10.0"
+black = "^24.3.0"
 pylint = "^2.15.7"
 flake8 = "^6.0.0"
 cookiecutter = "^2.1.1"
