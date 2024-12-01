@@ -18,7 +18,6 @@
     name: xfsprogs
     state: present
   become: true
-  loop: "{{ lvm_groups | subelements('lvnames') }}"
   when:
     - item.1 is defined
     - item.1 != 'None'
