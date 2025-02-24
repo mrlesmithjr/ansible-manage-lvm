@@ -1,4 +1,4 @@
-ansible-core==2.13.10 ; python_version >= "3.9" and python_version < "4.0"
+ansible-core==2.16.14 ; python_version >= "3.9" and python_version < "4.0"
 ansible==6.6.0 ; python_version >= "3.9" and python_version < "4.0"
 cffi==1.15.1 ; python_version >= "3.9" and python_version < "4.0"
 cryptography==41.0.1 ; python_version >= "3.9" and python_version < "4.0"

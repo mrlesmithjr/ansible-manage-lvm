@@ -1,5 +1,5 @@
 ansible-compat==3.0.2 ; python_version >= "3.9" and python_version < "4.0"
-ansible-core==2.13.10 ; python_version >= "3.9" and python_version < "4.0"
+ansible-core==2.16.14 ; python_version >= "3.9" and python_version < "4.0"
 ansible-lint==6.8.7 ; python_version >= "3.9" and python_version < "4.0"
 ansible==6.6.0 ; python_version >= "3.9" and python_version < "4.0"
 arrow==1.2.3 ; python_version >= "3.9" and python_version < "4.0"
