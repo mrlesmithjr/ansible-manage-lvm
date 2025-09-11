@@ -37,4 +37,4 @@
   ansible.builtin.command: "{{ rescan_scsi_command }}"
   become: true
   changed_when: false
-  when: scsi_devices['stdout'] | length
+  when: scsi_devices.stdout | length > 0
