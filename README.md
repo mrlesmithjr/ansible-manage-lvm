@@ -1,64 +1,122 @@
 # ansible-manage-lvm
 
-Ansible role to manage LVM Groups/Logical Volumes.
+An [Ansible](https://www.ansible.com) role to create, extend, and resize [LVM](https://en.wikipedia.org/wiki/Logical_Volume_Manager_(Linux)) volume groups and logical volumes.
 
-> NOTE: Can be used to create, extend or resize LVM Groups and volumes.
+> Used by [OpenStack Kayobe](https://docs.openstack.org/kayobe/latest/) for LVM management.
 
-## ⚠️ Important: Ansible Galaxy Role Name
+## Ansible Galaxy
 
-**As of December 2025**, this role is available on Ansible Galaxy as:
-
-```yaml
-- src: mrlesmithjr.manage_lvm  # Note: underscore, not hyphen
+```bash
+ansible-galaxy install mrlesmithjr.manage_lvm
 ```
 
-The previous role names (`mrlesmithjr.manage-lvm` and `mrlesmithjr.manage_lvm`) were
-consolidated into a single role. If you were using `mrlesmithjr.manage-lvm`, please
-update your `requirements.yml` to use `mrlesmithjr.manage_lvm`.
+> **Note:** As of December 2025, the canonical Galaxy name is `mrlesmithjr.manage_lvm` (underscore).
+> Update any `requirements.yml` using the older hyphen-style name `mrlesmithjr.manage-lvm`.
 
-**Note:** This role is used by [OpenStack Kayobe](https://docs.openstack.org/kayobe/latest/)
-for LVM management. The `manage_lvm` name was preserved to maintain compatibility.
-
-### Historical Download Statistics
-
-Prior to consolidation, this role had accumulated significant usage:
+<details>
+<summary>Historical download statistics</summary>
 
 | Role Name | Downloads (as of Dec 2025) |
 |-----------|---------------------------|
 | `mrlesmithjr.manage_lvm` | 697,492 |
 | `mrlesmithjr.manage-lvm` | 494,517 |
-| **Combined Total** | **1,192,009** |
+| **Combined** | **1,192,009** |
 
-Due to Ansible Galaxy limitations, download counts reset when roles are re-imported.
-The historical data above represents the actual community usage of this role.
+Download counts reset when roles are re-imported to Galaxy. These figures represent actual historical usage.
+</details>
+
+## Supported Platforms
+
+Any Linux distribution with LVM support, including:
+
+| Platform | Versions |
+|----------|----------|
+| Ubuntu | 20.04, 22.04, 24.04 |
+| Debian | 11, 12 |
+| Rocky Linux / RHEL | 8, 9 |
+| Fedora | 39+ |
 
 ## Requirements
 
-Devices/disks to be members of the LVM setup **must be** identified prior to
-using this role.
+- Unpartitioned disk devices to assign to volume groups
+- `lvm2` package (installed automatically by the role)
 
-## Role Variables
+## Important: Safety Default
 
-[defaults/main.yml](defaults/main.yml)
+`manage_lvm` defaults to `false`. **The role will not make any disk changes** unless you explicitly set:
 
-## Dependencies
+```yaml
+manage_lvm: true
+```
 
-None
+This prevents accidental modifications on misconfigured runs.
 
-## Example Playbook
+## Quick Start
 
-[playbook.yml](playbook.yml)
+```yaml
+---
+- hosts: all
+  become: true
+  vars:
+    manage_lvm: true
+    lvm_groups:
+      - vgname: data-vg
+        disks:
+          - /dev/sdb
+        create: true
+        lvnames:
+          - lvname: data
+            size: 100%FREE
+            create: true
+            filesystem: ext4
+            mount: true
+            mntp: /data
+  roles:
+    - role: mrlesmithjr.manage_lvm
+```
+
+## Key Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `manage_lvm` | `false` | Master switch — must be `true` to make any changes |
+| `lvm_groups` | `[]` | List of volume group definitions |
+| `pvresize_to_max` | `false` | Resize all PVs to maximum available size |
+
+### `lvm_groups` Structure
+
+```yaml
+lvm_groups:
+  - vgname: my-vg           # Volume group name
+    disks:                   # Physical volumes to assign
+      - /dev/sdb
+      - /dev/sdc
+    create: true             # true = create, false = remove
+    pvresize: false          # Resize PV to max size
+    lvnames:
+      - lvname: data         # Logical volume name
+        size: 50g            # Size: 10g | 1024 (MB) | 100%FREE
+        create: true         # true = create, false = remove
+        filesystem: ext4     # ext4 | xfs | swap | etc.
+        mount: true          # Mount after creation
+        mntp: /data          # Mountpoint
+        mopts: noatime       # Mount options (optional)
+        fsopts:              # Filesystem creation options (optional)
+```
+
+See [defaults/main.yml](defaults/main.yml) for full examples including XFS, swap, and OpenStack Cinder volumes.
 
 ## License
 
 MIT
 
-## Author Information
+## Support This Project
 
-Larry Smith Jr.
+This role has been downloaded over **1.1 million times** from Ansible Galaxy.
+If your organization depends on it in production, consider
+[sponsoring its maintenance](https://github.com/sponsors/mrlesmithjr).
+Enterprise support tiers are available.
 
-- [@mrlesmithjr](https://twitter.com/mrlesmithjr)
-- [mrlesmithjr@gmail.com](mailto:mrlesmithjr@gmail.com)
-- [http://everythingshouldbevirtual.com](http://everythingshouldbevirtual.com)
+## Author
 
-<a href="https://www.buymeacoffee.com/mrlesmithjr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+Larry Smith Jr. — [everythingshouldbevirtual.com](http://everythingshouldbevirtual.com) · [mrlesmithjr@gmail.com](mailto:mrlesmithjr@gmail.com)
