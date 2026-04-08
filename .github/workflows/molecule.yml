@@ -1,4 +1,4 @@
-name: Molecule
+name: CI
 on:
   push:
     branches-ignore:
@@ -10,22 +10,17 @@ on:
       - main
       - master
 jobs:
-  build:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      max-parallel: 4
-      matrix:
-        python-version: ["3.11"]
-
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.11'
       - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
